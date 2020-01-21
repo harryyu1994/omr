@@ -44,7 +44,7 @@ namespace OMR
 namespace ARM
 {
 
-class CPU : public OMR::CPU
+class OMR_EXTENSIBLE CPU : public OMR::CPU
    {
 protected:
 

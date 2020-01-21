@@ -32,6 +32,8 @@ namespace OMR { typedef OMR::CPU CPUConnector; }
 #endif
 
 #include "env/Processors.hpp"
+#include "infra/Annotations.hpp"
+#include "omrport.h"
 
 namespace TR { class CPU; }
 
@@ -78,16 +80,11 @@ enum MinorArchitecture
 namespace OMR
 {
 
-class CPU
+class OMR_EXTENSIBLE CPU
    {
 protected:
 
-   CPU() :
-         _processor(TR_NullProcessor),
-         _endianness(TR::endian_unknown),
-         _majorArch(TR::arch_unknown),
-         _minorArch(TR::m_arch_none)
-      {}
+   CPU();
 
 public:
 
@@ -135,11 +132,49 @@ public:
    bool isI386() { return _minorArch == TR::m_arch_i386; }
    bool isAMD64() { return _minorArch == TR::m_arch_amd64; }
 
-   /** @brief Determines whether the Transactional Memory (TM) facility is available on the current processor.
-    *
-    *  @return false; this is the default answer unless overridden by an extending class.
+   /** 
+    * @brief Determines whether the Transactional Memory (TM) facility is available on the current processor.
+    * @return false; this is the default answer unless overridden by an extending class.
     */
    bool supportsTransactionalMemoryInstructions() { return false; }
+
+   /** 
+    * @brief Determines whether current processor is the same as the input processor type
+    * @param[in] p : the input processor type
+    * @return true when current processor is the same as the input processor type
+    */
+   bool is(OMRProcessorArchitecture p) const { return _processorDescription.processor == p; }
+
+   /**
+    * @brief Determines whether current processor is equal or newer than the input processor type
+    * @param[in] p : the input processor type
+    * @return true when current processor is equal or newer than the input processor type
+    */
+   bool isAtLeast(OMRProcessorArchitecture p) const { return _processorDescription.processor >= p; }
+
+   /** 
+    * @brief Determines whether current processor is equal or older than the input processor type
+    * @param[in] p : the input processor type
+    * @return true when current processor is equal or newer than the input processor type
+    */
+   bool isAtMost(OMRProcessorArchitecture p) const { return _processorDescription.processor <= p; }
+
+   /** 
+    * @brief Retrieves current processor's processor description
+    * @return processor description which includes processor type and processor features
+    */
+   const OMRProcessorDesc & getProcessorDescription() const { return _processorDescription; }
+
+   /** 
+    * @brief Determines whether current processor supports the input processor feature
+    * @param[in] feature : the input processor feature
+    * @return true when current processor supports the input processor feature
+    */
+   bool supportsFeature(uint32_t feature);
+
+protected:
+   OMRProcessorDesc _processorDescription;
+   uint32_t _featureMasks[OMRPORT_SYSINFO_FEATURES_SIZE];
 
 private:
    TR_Processor _processor;

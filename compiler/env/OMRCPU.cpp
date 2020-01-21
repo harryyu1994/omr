@@ -23,18 +23,33 @@
 #pragma csect(STATIC,"OMRCPUBase#S")
 #pragma csect(TEST,"OMRCPUBase#T")
 
+#include <string.h>
 #include "env/CPU.hpp"
 #include "env/CompilerEnv.hpp"
-#include "infra/Assert.hpp"
 #include "env/defines.h"
+#include "infra/Assert.hpp"
 #include "omrcfg.h"
+#include "omrformatconsts.h"
+
+OMR::CPU::CPU():
+   _processor(TR_NullProcessor),
+   _endianness(TR::endian_unknown),
+   _majorArch(TR::arch_unknown),
+   _minorArch(TR::m_arch_none)
+   {
+   if (TR::Compiler->omrPortLib)
+      {
+      OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
+      omrsysinfo_get_processor_description(&_processorDescription);
+      memset(_featureMasks, ~0, OMRPORT_SYSINFO_FEATURES_SIZE*sizeof(uint32_t));
+      }
+   }
 
 TR::CPU *
 OMR::CPU::self()
    {
    return static_cast<TR::CPU*>(this);
    }
-
 
 void
 OMR::CPU::initializeByHostQuery()
@@ -87,4 +102,17 @@ OMR::CPU::initializeByHostQuery()
    _majorArch = TR::arch_unknown;
 #endif
 
+   }
+
+bool
+OMR::CPU::supportsFeature(uint32_t feature)
+   {
+   TR_ASSERT_FATAL((1<<(feature%32)) & _featureMasks[feature/32] == 0, 
+                   "The " OMR_PRIu32 " feature needs to be added to the enabledFeatures array"
+                   "(which can be found in the platform specific OMR::CPU constructor)"
+                   "for correctness in relocatable compiles!\n", feature);
+
+   OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
+   BOOLEAN supported = omrsysinfo_processor_has_feature(&_processorDescription, feature);
+   return (TRUE == supported);
    }

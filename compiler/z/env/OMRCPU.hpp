@@ -45,7 +45,7 @@ namespace OMR
 namespace Z
 {
 
-class CPU : public OMR::CPU
+class OMR_EXTENSIBLE CPU : public OMR::CPU
    {
    public:
 
