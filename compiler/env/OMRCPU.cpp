@@ -88,3 +88,31 @@ OMR::CPU::initializeByHostQuery()
 #endif
 
    }
+
+bool
+OMR::CPU::supportsFeature(uint32_t feature)
+   {
+   OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
+   BOOLEAN supported = omrsysinfo_processor_has_feature(&_processorDescription, feature);
+   return (TRUE == supported);
+   }
+
+TR::CPU
+OMR::CPU::detect(OMRPortLibrary * const omrPortLib)
+   {
+   TR::CPU cpu;
+   OMRProcessorDesc processorDescription;
+
+   OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
+   omrsysinfo_get_processor_description(&processorDescription);
+   cpu.postInitialization(&processorDescription);
+
+   cpu.setProcessorDescription(processorDescription);
+   return cpu;
+   }
+
+TR::CPU
+OMR::CPU::detectRelocatable(OMRPortLibrary * const omrPortLib)
+   {
+   return TR::CPU::detect(omrPortLib);
+   }

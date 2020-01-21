@@ -26,7 +26,7 @@
 
 namespace TR
 {
-class CPU : public OMR::CPUConnector
+class OMR_EXTENSIBLE CPU : public OMR::CPUConnector
    {
    public:
 

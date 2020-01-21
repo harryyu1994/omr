@@ -27,7 +27,6 @@
 #include "infra/Flags.hpp"
 #include "x/runtime/X86Runtime.hpp"
 
-
 TR_X86CPUIDBuffer *
 OMR::X86::CPU::queryX86TargetCPUID()
    {
@@ -126,3 +125,77 @@ OMR::X86::CPU::supportsTransactionalMemoryInstructions()
    flags32_t processorFeatureFlags8(self()->getX86ProcessorFeatureFlags8());
    return processorFeatureFlags8.testAny(TR_RTM);
    }
+
+bool
+OMR::X86::CPU::isGenuineIntel()
+   {
+   return self()->isAtLeast(OMR_PROCESSOR_X86_INTEL_FIRST) && self()->isAtMost(OMR_PROCESSOR_X86_INTEL_LAST);
+   }
+
+bool
+OMR::X86::CPU::isAuthenticAMD()
+   {
+   return self()->isAtLeast(OMR_PROCESSOR_X86_AMD_FIRST) && self()->isAtMost(OMR_PROCESSOR_X86_AMD_LAST);
+   }
+
+bool
+OMR::X86::CPU::requiresLFence()
+   {
+   return false;  /* Dummy for now, we may need LFENCE in future processors*/
+   }
+
+bool
+OMR::X86::CPU::supportsFCOMIInstructions()
+   {
+   return self()->supportsFeature(OMR_FEATURE_X86_FPU) || self()->supportsFeature(OMR_FEATURE_X86_CMOV);
+   }
+
+bool
+OMR::X86::CPU::supportsMFence()
+   {
+   return self()->supportsFeature(OMR_FEATURE_X86_SSE2);
+   }
+
+bool
+OMR::X86::CPU::supportsLFence()
+   {
+   return self()->supportsFeature(OMR_FEATURE_X86_SSE2);
+   }
+
+bool
+OMR::X86::CPU::supportsSFence()
+   {
+   return self()->supportsFeature(OMR_FEATURE_X86_SSE2) || self()->supportsFeature(OMR_FEATURE_X86_MMX);
+   }
+
+bool
+OMR::X86::CPU::prefersMultiByteNOP()
+   {
+   return self()->isGenuineIntel() && !self()->is(OMR_PROCESSOR_X86_INTELPENTIUM);
+   }
+
+void
+OMR::X86::CPU::postInitialization(OMRProcessorDesc *processorDescription)
+   {
+   // Only enable the features that compiler currently uses
+   uint32_t enabledFeatures [] = {OMR_FEATURE_X86_FPU, OMR_FEATURE_X86_CX8, OMR_FEATURE_X86_CMOV,
+                                  OMR_FEATURE_X86_MMX, OMR_FEATURE_X86_SSE, OMR_FEATURE_X86_SSE2,
+                                  OMR_FEATURE_X86_SSSE3, OMR_FEATURE_X86_SSE4_1, OMR_FEATURE_X86_POPCNT,
+                                  OMR_FEATURE_X86_AESNI, OMR_FEATURE_X86_OSXSAVE, OMR_FEATURE_X86_AVX,
+                                  OMR_FEATURE_X86_HLE, OMR_FEATURE_X86_RTM};
+
+   uint32_t featureMasks[OMRPORT_SYSINFO_FEATURES_SIZE];
+   memset(featureMasks, 0, OMRPORT_SYSINFO_FEATURES_SIZE*sizeof(uint32_t));
+   for (size_t i = 0; i < sizeof(enabledFeatures)/sizeof(uint32_t); i++)
+      {
+      uint32_t index = enabledFeatures[i]/32;
+      uint32_t shift = enabledFeatures[i]%32;
+      featureMasks[index] |= (static_cast<uint32_t>(1) << shift);
+      }
+
+   for (size_t i = 0; i < OMRPORT_SYSINFO_FEATURES_SIZE; i++)
+      {
+      processorDescription->features[i] &= featureMasks[i];
+      }
+   }
+

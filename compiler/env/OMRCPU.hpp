@@ -32,6 +32,8 @@ namespace OMR { typedef OMR::CPU CPUConnector; }
 #endif
 
 #include "env/Processors.hpp"
+#include "infra/Annotations.hpp"
+#include "omrport.h"
 
 namespace TR { class CPU; }
 
@@ -78,7 +80,7 @@ enum MinorArchitecture
 namespace OMR
 {
 
-class CPU
+class OMR_EXTENSIBLE CPU
    {
 protected:
 
@@ -135,11 +137,73 @@ public:
    bool isI386() { return _minorArch == TR::m_arch_i386; }
    bool isAMD64() { return _minorArch == TR::m_arch_amd64; }
 
-   /** @brief Determines whether the Transactional Memory (TM) facility is available on the current processor.
-    *
-    *  @return false; this is the default answer unless overridden by an extending class.
+   /** 
+    * @brief Determines whether the Transactional Memory (TM) facility is available on the current processor.
+    * @return false; this is the default answer unless overridden by an extending class.
     */
    bool supportsTransactionalMemoryInstructions() { return false; }
+
+   /** 
+    * @brief Determines whether current processor is the same as the input processor type
+    * @param[in] p : the input processor type
+    * @return true when current processor is the same as the input processor type
+    */
+   bool is(OMRProcessorArchitecture p) const { return _processorDescription.processor == p; }
+
+   /**
+    * @brief Determines whether current processor is equal or newer than the input processor type
+    * @param[in] p : the input processor type
+    * @return true when current processor is equal or newer than the input processor type
+    */
+   bool isAtLeast(OMRProcessorArchitecture p) const { return _processorDescription.processor >= p; }
+
+   /** 
+    * @brief Determines whether current processor is equal or older than the input processor type
+    * @param[in] p : the input processor type
+    * @return true when current processor is equal or newer than the input processor type
+    */
+   bool isAtMost(OMRProcessorArchitecture p) const { return _processorDescription.processor <= p; }
+
+   /** 
+    * @brief Retrieves current processor's processor description
+    * @return processor description which includes processor type and processor features
+    */
+   const OMRProcessorDesc & getProcessorDescription() const { return _processorDescription; }
+
+   /** 
+    * @brief Sets processor description
+    * @param[in] processorDescription : the input processor description
+    * @return void
+    */
+   void setProcessorDescription(const OMRProcessorDesc &processorDescription) { _processorDescription = processorDescription; }
+
+   /** 
+    * @brief Sets platform specific modifications to the processor description 
+    * @param[in] processorDescription : the input processor description
+    * @return void
+    */
+   void postInitialization(OMRProcessorDesc *processorDescription) { }
+
+   /** 
+    * @brief Determines whether current processor supports the input processor feature
+    * @param[in] feature : the input processor feature
+    * @return true when current processor supports the input processor feature
+    */
+   bool supportsFeature(uint32_t feature);
+
+   /** 
+    * @brief Intializes and returns a TR::CPU object
+    * @param[in] omrPortLib : port library
+    * @return TR::CPU
+    */
+   static TR::CPU detect(OMRPortLibrary * const omrPortLib);
+
+   /** 
+    * @brief Intializes and returns a TR::CPU object
+    * @param[in] omrPortLib : port library
+    * @return TR::CPU
+    */
+   static TR::CPU detectRelocatable(OMRPortLibrary * const omrPortLib);
 
 private:
    TR_Processor _processor;
@@ -147,6 +211,8 @@ private:
    TR::Endianness _endianness;
    TR::MajorArchitecture _majorArch;
    TR::MinorArchitecture _minorArch;
+
+   OMRProcessorDesc _processorDescription;
    };
 }
 
