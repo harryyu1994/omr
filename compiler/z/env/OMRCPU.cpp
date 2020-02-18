@@ -112,7 +112,15 @@ OMR::Z::CPU::CPU()
    :
    OMR::CPU(),
    _supportedArch(z9)
-   {}
+   {
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZ6(), "Port OMR_PROCESSOR_S390_Z10 test failed!\n");
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_Z196) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZGryphon(), "Port OMR_PROCESSOR_S390_Z196 test failed!\n");
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_ZEC12) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZHelix(), "Port OMR_PROCESSOR_S390_ZEC12 test failed!\n");
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_Z13) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZ13(), "Port OMR_PROCESSOR_S390_Z13 test failed!\n");
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_Z14) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZ14(), "Port OMR_PROCESSOR_S390_Z14 test failed!\n");
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_Z15) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZ15(), "Port OMR_PROCESSOR_S390_Z15 test failed!\n");
+   TR_ASSERT_FATAL(TR::Compiler->cpu.isAtLeast(OMR_PROCESSOR_S390_ZNEXT) == TR::Compiler->cpu.TO_PORTLIB_get390_supportsZNext(), "Port OMR_PROCESSOR_S390_ZNEXT test failed!\n");
+   }
 
 bool
 OMR::Z::CPU::getSupportsArch(Architecture arch)
