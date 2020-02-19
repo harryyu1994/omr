@@ -46,3 +46,15 @@ OMR::Power::CPU::isTargetWithinIFormBranchRange(intptrj_t targetAddress, intptrj
    return range <= self()->maxIFormBranchForwardOffset() &&
           range >= self()->maxIFormBranchBackwardOffset();
    }
+
+bool
+OMR::Power::CPU::hasPopulationCountInstructionNew()
+   {
+   // Double check with os400 team to see if we can enable popcnt on I
+   //
+   #if defined(J9OS_I5)
+      return false;
+   #else
+      return TR::Compiler->target.cpu.isAtLeast(OMR_PROCESSOR_PPC_P7);
+   #endif
+   }

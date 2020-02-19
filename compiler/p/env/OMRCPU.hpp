@@ -102,6 +102,8 @@ public:
     */
    bool isTargetWithinIFormBranchRange(intptrj_t targetAddress, intptrj_t sourceAddress);
 
+   bool hasPopulationCountInstructionNew();
+
    };
 
 }
