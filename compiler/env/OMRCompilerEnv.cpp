@@ -52,6 +52,8 @@ OMR::CompilerEnv::initialize()
 
    self()->initializeTargetEnvironment();
 
+   self()->initializeRelocatableTargetEnvironment();
+
    om.initialize();
 
    _initialized = true;
@@ -137,6 +139,43 @@ OMR::CompilerEnv::initializeTargetEnvironment()
    target.setMajorOS(TR::os_bsd);
 #else
    target.setMajorOS(TR::os_unknown);
+#endif
+
+   }
+
+
+void
+OMR::CompilerEnv::initializeRelocatableTargetEnvironment()
+   {
+
+   // Target processor bitness
+   //
+#ifdef TR_TARGET_64BIT
+   relocatableTarget.setBitness(TR::bits_64);
+#elif TR_TARGET_32BIT
+   relocatableTarget.setBitness(TR::bits_32);
+#else
+   relocatableTarget.setBitness(TR::bits_unknown);
+#endif
+
+   // Initialize the target CPU by querying the host processor
+   //
+   relocatableTarget.cpu.initializeByHostQuery();
+
+   // Target major operating system
+   //
+#if HOST_OS == OMR_LINUX
+   relocatableTarget.setMajorOS(TR::os_linux);
+#elif HOST_OS == OMR_AIX
+   relocatableTarget.setMajorOS(TR::os_aix);
+#elif HOST_OS == OMR_WINDOWS
+   relocatableTarget.setMajorOS(TR::os_windows);
+#elif HOST_OS == OMR_ZOS
+   relocatableTarget.setMajorOS(TR::os_zos);
+#elif HOST_OS == OMR_OSX
+   relocatableTarget.setMajorOS(TR::os_osx);
+#else
+   relocatableTarget.setMajorOS(TR::os_unknown);
 #endif
 
    }
