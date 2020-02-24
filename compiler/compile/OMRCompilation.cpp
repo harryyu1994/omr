@@ -297,6 +297,10 @@ OMR::Compilation::Compilation(
    _target(TR::Compiler->target),
    _tlsManager(*self())
    {
+#if defined(TR_TARGET_X86)   
+   if (self()->compileRelocatableCode())
+      _target = TR::Compiler->relocatableTarget;
+#endif
 
    //Avoid expensive initialization and uneeded option checking if we are doing AOT Loads
    if (_optimizationPlan && _optimizationPlan->getIsAotLoad())
