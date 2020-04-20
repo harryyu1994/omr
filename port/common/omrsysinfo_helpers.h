@@ -51,6 +51,7 @@ omrsysinfo_get_cpu_model(uint32_t processorSignature);
 
 extern uint32_t
 omrsysinfo_get_cpu_extended_model(uint32_t processorSignature);
+
 #endif /* defined(OMR_OS_WINDOWS) || defined(J9X86) || defined(J9HAMMER) */
 
 #endif /* SYSINFOHELPERS_H_ */

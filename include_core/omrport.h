@@ -1298,6 +1298,7 @@ typedef struct OMRProcessorDesc {
 	OMRProcessorArchitecture processor;
 	OMRProcessorArchitecture physicalProcessor;
 	uint32_t features[OMRPORT_SYSINFO_FEATURES_SIZE];
+	uint32_t processorSignature;
 } OMRProcessorDesc;
 
 /* PowerPC features
@@ -1543,6 +1544,7 @@ typedef struct OMRProcessorDesc {
 /* INTEL INSTRUCTION SET REFERENCE, A-L May 2019
  * Vol. 2 3-197 Table 3-8. Structured Feature Information Returned in the EBX Register by CPUID instruction
  */
+
 #define OMR_FEATURE_X86_FSGSBASE            96 + 0 /* fsgsbase instructions support */
 #define OMR_FEATURE_X86_IA32_TSC_ADJUST     96 + 1 /* IA32_TSC_ADJUST MSR support */
 #define OMR_FEATURE_X86_SGX                 96 + 2 /* Intel Software Guard Extensions */

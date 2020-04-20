@@ -119,7 +119,9 @@ omrsysinfo_get_x86_description(struct OMRPortLibrary *portLibrary, OMRProcessorD
 	/* family and model */
 	omrsysinfo_get_x86_cpuid(CPUID_FAMILY_INFO, CPUInfo);
 	processorSignature = CPUInfo[CPUID_EAX];
-	familyCode = (processorSignature & CPUID_SIGNATURE_FAMILY) >> CPUID_SIGNATURE_FAMILY_SHIFT;
+	familyCode = omrsysinfo_get_cpu_family(processorSignature);
+	desc->processorSignature = processorSignature;
+
 	if (0 == strncmp(vendor, CPUID_VENDOR_INTEL, CPUID_VENDOR_LENGTH)) {
 		switch (familyCode) {
 		case CPUID_FAMILYCODE_INTELPENTIUM:

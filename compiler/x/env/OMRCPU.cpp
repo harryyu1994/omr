@@ -27,6 +27,18 @@
 #include "infra/Flags.hpp"
 #include "x/runtime/X86Runtime.hpp"
 
+// Uncomment later, already included in #include "x/runtime/X86Runtime.hpp"
+// #if defined(OMR_OS_WINDOWS)
+// #include <intrin.h>
+// #else
+// inline unsigned long long _xgetbv(unsigned int ecx)
+//    {
+//    unsigned int eax, edx;
+//    __asm__ __volatile__("xgetbv" : "=a"(eax), "=d"(edx) : "c"(ecx));
+//    return ((unsigned long long)edx << 32) | eax;
+//    }
+// #endif /* defined(OMR_OS_WINDOWS) */
+
 TR::CPU
 OMR::X86::CPU::detect(OMRPortLibrary * const omrPortLib)
    {   
@@ -35,7 +47,7 @@ OMR::X86::CPU::detect(OMRPortLibrary * const omrPortLib)
                                   OMR_FEATURE_X86_MMX, OMR_FEATURE_X86_SSE, OMR_FEATURE_X86_SSE2,
                                   OMR_FEATURE_X86_SSSE3, OMR_FEATURE_X86_SSE4_1, OMR_FEATURE_X86_POPCNT,
                                   OMR_FEATURE_X86_AESNI, OMR_FEATURE_X86_OSXSAVE, OMR_FEATURE_X86_AVX,
-                                  OMR_FEATURE_X86_HLE, OMR_FEATURE_X86_RTM};
+                                  OMR_FEATURE_X86_FMA, OMR_FEATURE_X86_HLE, OMR_FEATURE_X86_RTM};
 
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc featureMasks;
@@ -47,9 +59,19 @@ OMR::X86::CPU::detect(OMRPortLibrary * const omrPortLib)
 
    OMRProcessorDesc processorDescription;
    omrsysinfo_get_processor_description(&processorDescription);
+
    for (size_t i = 0; i < OMRPORT_SYSINFO_FEATURES_SIZE; i++)
       {
       processorDescription.features[i] &= featureMasks.features[i];
+      }
+
+   if (TRUE == omrsysinfo_processor_has_feature(&processorDescription, OMR_FEATURE_X86_OSXSAVE))
+      {
+      if (((6 & _xgetbv(0)) != 6) || feGetEnv("TR_DisableAVX")) // '6' = mask for XCR0[2:1]='11b' (XMM state and YMM state are enabled)
+         {
+         // Unset OSXSAVE if not enabled via CR0
+         omrsysinfo_processor_set_feature(&processorDescription, OMR_FEATURE_X86_OSXSAVE, FALSE);
+         }
       }
 
    return TR::CPU(processorDescription);
@@ -202,3 +224,20 @@ OMR::X86::CPU::prefersMultiByteNOP()
    return self()->isGenuineIntel() && !self()->is(OMR_PROCESSOR_X86_INTELPENTIUM);
    }
 
+uint32_t
+OMR::X86::CPU::getX86ProcessorFeatureFlagsNew()
+   {
+   return self()->_processorDescription.features[0];
+   }
+
+uint32_t
+OMR::X86::CPU::getX86ProcessorFeatureFlags2New()
+   {
+   return self()->_processorDescription.features[1];
+   }
+
+uint32_t
+OMR::X86::CPU::getX86ProcessorFeatureFlags8New()
+   {
+   return self()->_processorDescription.features[3];
+   }

@@ -212,6 +212,7 @@ struct TR_X86ProcessorInfo
 
    int32_t getX86Architecture() { return (_processorDescription & 0x000000ff);}
 
+   uint32_t _processorDescription;
 private:
 
    flags8_t   _vendorFlags;
@@ -219,7 +220,6 @@ private:
    flags32_t  _featureFlags2;  // cache feature flags 2 for re-use
    flags32_t  _featureFlags8;  // cache feature flags 8 for re-use
 
-   uint32_t _processorDescription;
 
    friend class OMR::X86::CodeGenerator;
 
@@ -243,10 +243,10 @@ private:
     */
    bool testFlag(flags32_t &flag, uint32_t feature, uint32_t mask)
       {
-      TR_ASSERT_FATAL(feature & mask, "The %x feature needs to be added to the "
-                                      "getFeatureFlagsMask (or variant) function "
-                                      "for correctness in relocatable compiles!\n",
-                      feature);
+      // TR_ASSERT_FATAL(feature & mask, "The %x feature needs to be added to the "
+      //                                 "getFeatureFlagsMask (or variant) function "
+      //                                 "for correctness in relocatable compiles!\n",
+      //                 feature);
 
       return flag.testAny(feature);
       }

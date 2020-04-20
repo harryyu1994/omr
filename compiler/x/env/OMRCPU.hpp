@@ -92,6 +92,7 @@ public:
       {
       return targetAddress == sourceAddress + (int32_t)(targetAddress - sourceAddress);
       }
+   
    bool isGenuineIntel();
    bool isAuthenticAMD();
    
@@ -101,6 +102,10 @@ public:
    bool supportsLFence();
    bool supportsSFence();
    bool prefersMultiByteNOP();
+
+   uint32_t getX86ProcessorFeatureFlagsNew();
+   uint32_t getX86ProcessorFeatureFlags2New();
+   uint32_t getX86ProcessorFeatureFlags8New();
    };
 }
 
