@@ -100,12 +100,12 @@ TR::Register *TR_X86IntegerMultiplyDecomposer::decomposeIntegerMultiplier(int32_
             {
             target = generateDecompositionInstructions(decompositionIndex, tempRegArraySize, tempRegArray);
             if (shiftAmount < 3 &&
-               !cg()->getX86ProcessorInfo().isIntelCore2() &&
-               !cg()->getX86ProcessorInfo().isIntelNehalem() &&
-               !cg()->getX86ProcessorInfo().isIntelWestmere() &&
-               !cg()->getX86ProcessorInfo().isIntelSandyBridge() &&
-               !cg()->getX86ProcessorInfo().isAMD15h() &&
-               !cg()->getX86ProcessorInfo().isAMDOpteron()) // TODO:: P3 should go straight to else and use shift always
+               !TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELCORE2) &&
+               !TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELNEHALEM) &&
+               !TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELWESTMERE) &&
+               !TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELSANDYBRIDGE) &&
+               !TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_AMDFAMILY15H) &&
+               !TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_AMDOPTERON)) // TODO:: P3 should go straight to else and use shift always
                {
                for (; shiftAmount > 0; --shiftAmount)
                   {

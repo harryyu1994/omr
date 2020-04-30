@@ -212,13 +212,13 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
 
    // Pick a padding table
    //
-   if (_targetProcessorInfo.isGenuineIntel() && comp->target().is32Bit())
+   if (TR::Compiler->target.cpu.isGenuineIntel() && comp->target().is32Bit())
       {
       _paddingTable = &_old32BitPaddingTable;
       }
-   else if (_targetProcessorInfo.isAuthenticAMD())
+   else if (TR::Compiler->target.cpu.isAuthenticAMD())
       _paddingTable = &_K8PaddingTable;
-   else if (_targetProcessorInfo.prefersMultiByteNOP() && !comp->getOption(TR_DisableZealousCodegenOpts))
+   else if (TR::Compiler->target.cpu.prefersMultiByteNOP() && !comp->getOption(TR_DisableZealousCodegenOpts))
       _paddingTable = &_intelMultiBytePaddingTable;
    else if (comp->target().is32Bit())
       _paddingTable = &_old32BitPaddingTable; // Unknown 32-bit target
@@ -229,11 +229,11 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    //
 
 #if defined(TR_TARGET_X86) && !defined(J9HAMMER)
-   if (_targetProcessorInfo.supportsSSE2() && comp->target().cpu.testOSForSSESupport())
+   if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE2) && comp->target().cpu.testOSForSSESupport())
       supportsSSE2 = true;
 #endif // defined(TR_TARGET_X86) && !defined(J9HAMMER)
 
-   if (_targetProcessorInfo.supportsTM() && !comp->getOption(TR_DisableTM))
+   if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_RTM) && !comp->getOption(TR_DisableTM))
       {
       /**
         * Due to many verions of Haswell and a small number of Broadwell have defects for TM and then disabled by Intel,
@@ -241,7 +241,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
         *
         * TODO: Need to figure out from which mode of Broadwell start supporting TM
         */
-      if (!_targetProcessorInfo.isIntelHaswell())
+      if (!TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELHASWELL))
          {
          if (comp->target().is64Bit())
             {
@@ -267,7 +267,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    if (self()->useSSEForDoublePrecision())
       {
       static char *forceMOVLPD = feGetEnv("TR_forceMOVLPDforDoubleLoads");
-      if (_targetProcessorInfo.isAuthenticAMD() || forceMOVLPD)
+      if (TR::Compiler->target.cpu.isAuthenticAMD() || forceMOVLPD)
          {
          self()->setXMMDoubleLoadOpCode(MOVLPDRegMem);
          }
@@ -283,7 +283,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    // 32-bit platforms must check the processor and OS.
    // 64-bit platforms unconditionally support prefetching.
    //
-   if (_targetProcessorInfo.supportsSSE() && comp->target().cpu.testOSForSSESupport())
+   if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE) && comp->target().cpu.testOSForSSESupport())
 #endif // defined(TR_TARGET_X86) && !defined(J9HAMMER)
       {
       self()->setTargetSupportsSoftwarePrefetches();
@@ -292,7 +292,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    // Enable software prefetch of the TLH and configure the TLH prefetching
    // geometry.
    //
-   if (((!comp->getOption(TR_DisableTLHPrefetch) && (comp->cg()->getX86ProcessorInfo().isIntelCore2() || comp->cg()->getX86ProcessorInfo().isIntelNehalem())) ||
+   if (((!comp->getOption(TR_DisableTLHPrefetch) && (TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELCORE2) || TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELNEHALEM))) ||
        (comp->getOption(TR_TLHPrefetch) && self()->targetSupportsSoftwarePrefetches())))
       {
       self()->setEnableTLHPrefetching();
@@ -384,7 +384,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
       static bool disableX86TRTO = (bool)feGetEnv("TR_disableX86TRTO");
       if (!disableX86TRTO)
          {
-         if (self()->getX86ProcessorInfo().supportsSSE4_1())
+         if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1))
             {
             self()->setSupportsArrayTranslateTRTO();
             }
@@ -392,11 +392,11 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
       static bool disableX86TROT = (bool)feGetEnv("TR_disableX86TROT");
       if (!disableX86TROT)
          {
-         if (self()->getX86ProcessorInfo().supportsSSE4_1())
+         if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1))
             {
             self()->setSupportsArrayTranslateTROT();
             }
-         if (self()->getX86ProcessorInfo().supportsSSE2())
+         if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE2))
             {
             self()->setSupportsArrayTranslateTROTNoBreak();
             }
@@ -431,7 +431,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    // be patched.
    //
    int32_t boundary;
-   if (_targetProcessorInfo.isGenuineIntel() || (_targetProcessorInfo.isAuthenticAMD() && _targetProcessorInfo.isAMD15h()))
+   if (TR::Compiler->target.cpu.isGenuineIntel() || (TR::Compiler->target.cpu.isAuthenticAMD() && TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_AMDFAMILY15H)))
       boundary = 32;
    else
       {
@@ -991,7 +991,7 @@ OMR::X86::CodeGenerator::getSupportsOpCodeForAutoSIMD(TR::ILOpCode opcode, TR::D
          else
             return false;
       case TR::vmul:
-         if (dt == TR::Float || dt == TR::Double || (dt == TR::Int32 && self()->getX86ProcessorInfo().supportsSSE4_1()))
+         if (dt == TR::Float || dt == TR::Double || (dt == TR::Int32 && TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1)))
             return true;
          else
             return false;
@@ -1047,14 +1047,14 @@ OMR::X86::CodeGenerator::getSupportsOpCodeForAutoSIMD(TR::ILOpCode opcode, TR::D
 bool
 OMR::X86::CodeGenerator::getSupportsEncodeUtf16LittleWithSurrogateTest()
    {
-   return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE4_1() &&
+   return TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1) &&
           !self()->comp()->getOption(TR_DisableSIMDUTF16LEEncoder);
    }
 
 bool
 OMR::X86::CodeGenerator::getSupportsEncodeUtf16BigWithSurrogateTest()
    {
-   return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE4_1() &&
+   return TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1) &&
           !self()->comp()->getOption(TR_DisableSIMDUTF16BEEncoder);
    }
 

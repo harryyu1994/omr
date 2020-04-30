@@ -100,8 +100,10 @@ OMR::CPU::initializeByHostQuery()
 bool
 OMR::CPU::supportsFeature(uint32_t feature)
    {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
-   BOOLEAN supported = omrsysinfo_processor_has_feature(&_processorDescription, feature);
-   return (TRUE == supported);
+   return TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature);
    }
 

@@ -37,7 +37,7 @@ template <typename TBuffer> inline typename TBuffer::cursor_t TR_X86OpCode::OpCo
    TR::Instruction::REX rex(rexbits);
    rex.W = rex_w;
    // Use AVX if possible
-   if (supportsAVX() && TR::CodeGenerator::getX86ProcessorInfo().supportsAVX())
+   if (supportsAVX() && TR::Compiler->target.cpu.supportsAVX())
       {
       TR::Instruction::VEX<3> vex(rex, modrm_opcode);
       vex.m = escape;

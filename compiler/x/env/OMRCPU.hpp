@@ -101,6 +101,8 @@ public:
    bool supportsLFence();
    bool supportsSFence();
    bool prefersMultiByteNOP();
+   bool supportsAVX();
+
    };
 }
 
