@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corp. and others
+ * Copyright (c) 2000, 2020 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -35,7 +35,7 @@ OMR::X86::CPU::detect(OMRPortLibrary * const omrPortLib)
                                   OMR_FEATURE_X86_MMX, OMR_FEATURE_X86_SSE, OMR_FEATURE_X86_SSE2,
                                   OMR_FEATURE_X86_SSSE3, OMR_FEATURE_X86_SSE4_1, OMR_FEATURE_X86_POPCNT,
                                   OMR_FEATURE_X86_AESNI, OMR_FEATURE_X86_OSXSAVE, OMR_FEATURE_X86_AVX,
-                                  OMR_FEATURE_X86_HLE, OMR_FEATURE_X86_RTM};
+                                  OMR_FEATURE_X86_FMA, OMR_FEATURE_X86_HLE, OMR_FEATURE_X86_RTM};
 
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc featureMasks;
@@ -50,6 +50,15 @@ OMR::X86::CPU::detect(OMRPortLibrary * const omrPortLib)
    for (size_t i = 0; i < OMRPORT_SYSINFO_FEATURES_SIZE; i++)
       {
       processorDescription.features[i] &= featureMasks.features[i];
+      }
+
+   if (TRUE == omrsysinfo_processor_has_feature(&processorDescription, OMR_FEATURE_X86_OSXSAVE))
+      {
+      if (((6 & _xgetbv(0)) != 6) || feGetEnv("TR_DisableAVX")) // '6' = mask for XCR0[2:1]='11b' (XMM state and YMM state are enabled)
+         {
+         // Unset OSXSAVE if not enabled via CR0
+         omrsysinfo_processor_set_feature(&processorDescription, OMR_FEATURE_X86_OSXSAVE, FALSE);
+         }
       }
 
    return TR::CPU(processorDescription);
@@ -120,19 +129,19 @@ OMR::X86::CPU::getX86ProcessorSignature()
 uint32_t
 OMR::X86::CPU::getX86ProcessorFeatureFlags()
    {
-   return self()->queryX86TargetCPUID()->_featureFlags;
+   return self()->_processorDescription.features[0];
    }
 
 uint32_t
 OMR::X86::CPU::getX86ProcessorFeatureFlags2()
    {
-   return self()->queryX86TargetCPUID()->_featureFlags2;
+   return self()->_processorDescription.features[1];
    }
 
 uint32_t
 OMR::X86::CPU::getX86ProcessorFeatureFlags8()
    {
-   return self()->queryX86TargetCPUID()->_featureFlags8;
+   return self()->_processorDescription.features[3];
    }
 
 bool
@@ -201,4 +210,11 @@ OMR::X86::CPU::prefersMultiByteNOP()
    {
    return self()->isGenuineIntel() && !self()->is(OMR_PROCESSOR_X86_INTELPENTIUM);
    }
+
+bool
+OMR::X86::CPU::supportsAVX()
+   {
+   return self()->supportsFeature(OMR_FEATURE_X86_AVX) && self()->supportsFeature(OMR_FEATURE_X86_OSXSAVE);
+   }
+
 

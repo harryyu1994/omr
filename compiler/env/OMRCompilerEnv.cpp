@@ -27,13 +27,14 @@
 
 OMR::CompilerEnv::CompilerEnv(
    TR::RawAllocator raw,
-   const TR::PersistentAllocatorKit &persistentAllocatorKit
+   const TR::PersistentAllocatorKit &persistentAllocatorKit,
+   OMRPortLibrary * const portLib
    ) :
       rawAllocator(raw),
       _initialized(false),
       _persistentAllocator(persistentAllocatorKit),
       regionAllocator(_persistentAllocator),
-      omrPortLib(NULL)
+      omrPortLib(portLib)
    {
    }
 
