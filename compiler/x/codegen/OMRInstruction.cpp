@@ -49,7 +49,8 @@ namespace TR { class Node; }
 OMR::X86::Instruction::Instruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, TR::Node *node)
    : OMR::Instruction(cg, op, node),
       _conditions(0),
-      _rexRepeatCount(0)
+      _rexRepeatCount(0),
+      _opcode(BADIA32Op, cg)
    {
 
    }
@@ -57,7 +58,8 @@ OMR::X86::Instruction::Instruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemon
 OMR::X86::Instruction::Instruction(TR::CodeGenerator *cg, TR::Instruction *precedingInstruction, TR::InstOpCode::Mnemonic op, TR::Node *node)
    : OMR::Instruction(cg, precedingInstruction, op, node),
       _conditions(0),
-      _rexRepeatCount(0)
+      _rexRepeatCount(0),
+      _opcode(BADIA32Op, cg)
    {
 
    }

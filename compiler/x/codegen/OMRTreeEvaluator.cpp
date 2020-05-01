@@ -2962,7 +2962,7 @@ static TR::Register * inlineSinglePrecisionSQRT(TR::Node *node, TR::CodeGenerato
  */
 static TR::Register* inlineAtomicMemoryUpdate(TR::Node* node, TR_X86OpCodes op, TR::CodeGenerator* cg)
    {
-   TR_ASSERT((!TR_X86OpCode(op).hasLongSource() && !TR_X86OpCode(op).hasLongTarget()) || cg->comp()->target().is64Bit(), "64-bit instruction not supported on IA32");
+   TR_ASSERT((!TR_X86OpCode(op, cg).hasLongSource() && !TR_X86OpCode(op, cg).hasLongTarget()) || cg->comp()->target().is64Bit(), "64-bit instruction not supported on IA32");
    TR::Register* address = cg->evaluate(node->getChild(0));
    TR::Register* value   = cg->gprClobberEvaluate(node->getChild(1), MOVRegReg());
 
@@ -3199,7 +3199,7 @@ void OMR::X86::TreeEvaluator::compareGPRegisterToConstantForEquality(TR::Node   
 
 TR::Register *OMR::X86::TreeEvaluator::fenceEvaluator(TR::Node *node, TR::CodeGenerator *cg)
    {
-   TR_X86OpCode fenceOp = BADIA32Op;
+   TR_X86OpCode fenceOp(cg);
    if (node->isLoadFence() && node->isStoreFence())
       fenceOp.setOpCodeValue(MFENCE);
    else if (node->isLoadFence())
@@ -3774,7 +3774,7 @@ TR::Register *OMR::X86::TreeEvaluator::PrefetchEvaluator(TR::Node *node, TR::Cod
 
    TR::Compilation *comp = cg->comp();
 
-   TR_X86OpCode prefetchOp(BADIA32Op);
+   TR_X86OpCode prefetchOp(cg);
 
    static char * disablePrefetch = feGetEnv("TR_DisablePrefetch");
    if (comp->isOptServer() || disablePrefetch)
@@ -3795,20 +3795,20 @@ TR::Register *OMR::X86::TreeEvaluator::PrefetchEvaluator(TR::Node *node, TR::Cod
 
    if (type == PrefetchLoad || type == PrefetchLoadL1)
       {
-      prefetchOp = PREFETCHT0;
+      prefetchOp.setOpCodeValue(PREFETCHT0);
       }
    else if (type == PrefetchStore || type == PrefetchLoadL2)
       {
-      prefetchOp = PREFETCHT1;
+      prefetchOp.setOpCodeValue(PREFETCHT1);
       }
    else if (type == PrefetchLoadNonTemporal || type == PrefetchStoreNonTemporal)
 
       {
-      prefetchOp = PREFETCHNTA;
+      prefetchOp.setOpCodeValue(PREFETCHNTA);
       }
    else if (type == PrefetchLoadL3)
       {
-      prefetchOp = PREFETCHT2;
+      prefetchOp.setOpCodeValue(PREFETCHT2);
       }
 
    if (prefetchOp.getOpCodeValue() != BADIA32Op)

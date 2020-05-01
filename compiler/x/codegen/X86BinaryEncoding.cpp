@@ -165,11 +165,11 @@ int32_t estimateMemoryBarrierBinaryLength(int32_t barrier, TR::CodeGenerator *cg
    if (barrier & LockOR)
       length = 5;
    else if ((barrier & kLoadFence) && cg->comp()->target().cpu.requiresLFence())
-      length = TR_X86OpCode(LFENCE).length();
+      length = TR_X86OpCode(LFENCE, cg).length();
    else if ((barrier & kMemoryFence) == kMemoryFence)
-      length = TR_X86OpCode(MFENCE).length();
+      length = TR_X86OpCode(MFENCE, cg).length();
    else if (barrier & kStoreFence)
-      length = TR_X86OpCode(SFENCE).length();
+      length = TR_X86OpCode(SFENCE, cg).length();
 
    return length;
    }
