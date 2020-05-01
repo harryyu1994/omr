@@ -120,7 +120,7 @@ int32_t memoryBarrierRequired(
             else
                barrier |= kMemoryFence;
          }
-         else if (TR::Compiler->target.cpu.requiresLFence())
+         else if (cg->comp()->target().cpu.requiresLFence())
             barrier |= kLoadFence;
          }
       else
@@ -133,7 +133,7 @@ int32_t memoryBarrierRequired(
             else
                barrier |= kMemoryFence;
          }
-         else if (op.usesTarget() && TR::Compiler->target.cpu.requiresLFence())
+         else if (op.usesTarget() && cg->comp()->target().cpu.requiresLFence())
             barrier |= kLoadFence;
          }
       }
@@ -141,8 +141,8 @@ int32_t memoryBarrierRequired(
    static char *disableExplicitFences = feGetEnv("TR_DisableExplicitFences");
    if (barrier)
       {
-      if ((!TR::Compiler->target.cpu.supportsLFence() ||
-           !TR::Compiler->target.cpu.supportsMFence()) || disableExplicitFences)
+      if ((!cg->comp()->target().cpu.supportsLFence() ||
+           !cg->comp()->target().cpu.supportsMFence()) || disableExplicitFences)
          {
          if (op.supportsLockPrefix())
             barrier |= LockPrefix;
@@ -164,7 +164,7 @@ int32_t estimateMemoryBarrierBinaryLength(int32_t barrier, TR::CodeGenerator *cg
 
    if (barrier & LockOR)
       length = 5;
-   else if ((barrier & kLoadFence) && TR::Compiler->target.cpu.requiresLFence())
+   else if ((barrier & kLoadFence) && cg->comp()->target().cpu.requiresLFence())
       length = TR_X86OpCode(LFENCE).length();
    else if ((barrier & kMemoryFence) == kMemoryFence)
       length = TR_X86OpCode(MFENCE).length();
@@ -1395,7 +1395,7 @@ TR::X86RegInstruction::enlarge(int32_t requestedEnlargementSize, int32_t maxEnla
    if (disableRexExpansion || cg()->comp()->getOption(TR_DisableZealousCodegenOpts))
       return OMR::X86::EnlargementResult(0, 0);
 
-   if (getOpCode().info().supportsAVX() && TR::Compiler->target.cpu.supportsAVX())
+   if (getOpCode().info().supportsAVX() && cg()->comp()->target().cpu.supportsAVX())
       return OMR::X86::EnlargementResult(0, 0); // REX expansion isn't allowed for AVX instructions
 
    if ((maxEnlargementSize < requestedEnlargementSize && !allowPartialEnlargement) || requestedEnlargementSize < 1)
