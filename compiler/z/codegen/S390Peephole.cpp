@@ -1352,7 +1352,7 @@ TR_S390PostRAPeephole::ConditionalBranchReduction(TR::InstOpCode::Mnemonic branc
 bool
 TR_S390PostRAPeephole::CompareAndBranchReduction()
    {
-   if (!comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+   if (!comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
       return false;
 
    bool branchTakenPerformReduction = false;
@@ -1566,7 +1566,7 @@ bool
 TR_S390PostRAPeephole::trueCompEliminationForCompare()
    {
    // z10 specific
-   if (!comp()->target().cpu.getSupportsArch(TR::CPU::z10) || comp()->target().cpu.getSupportsArch(TR::CPU::z196))
+   if (!comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) || comp()->target().cpu.getSupportsArch(TR::CPU::z196))
       {
       return false;
       }
@@ -1705,7 +1705,7 @@ bool
 TR_S390PostRAPeephole::trueCompEliminationForCompareAndBranch()
    {
    // z10 specific
-   if (!comp()->target().cpu.getSupportsArch(TR::CPU::z10) || comp()->target().cpu.getSupportsArch(TR::CPU::z196))
+   if (!comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) || comp()->target().cpu.getSupportsArch(TR::CPU::z196))
       {
       return false;
       }
@@ -1846,7 +1846,7 @@ TR_S390PostRAPeephole::trueCompEliminationForCompareAndBranch()
 bool
 TR_S390PostRAPeephole::trueCompEliminationForLoadComp()
    {
-   if (!comp()->target().cpu.getSupportsArch(TR::CPU::z10) || comp()->target().cpu.getSupportsArch(TR::CPU::z196))
+   if (!comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) || comp()->target().cpu.getSupportsArch(TR::CPU::z196))
       {
       return false;
       }
@@ -2615,7 +2615,7 @@ TR_S390PostRAPeephole::reloadLiteralPoolRegisterForCatchBlock()
    // This causes a failure when we come back to a catch block because the register context will not be preserved.
    // Hence, we can not assume that R6 will still contain the lit pool register and hence need to reload it.
 
-   bool isZ10 = comp()->target().cpu.getSupportsArch(TR::CPU::z10);
+   bool isZ10 = comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10);
 
    // we only need to reload literal pool for Java on older z architecture on zos when on demand literal pool is off
    if ( comp()->target().isZOS() && !isZ10 && !_cg->isLiteralPoolOnDemandOn())
@@ -2847,7 +2847,7 @@ TR_S390PostRAPeephole::perform()
             {
             static char * disableEXRLDispatch = feGetEnv("TR_DisableEXRLDispatch");
 
-            if (_cursor->isOutOfLineEX() && !comp()->getCurrentBlock()->isCold() && !(bool)disableEXRLDispatch && comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+            if (_cursor->isOutOfLineEX() && !comp()->getCurrentBlock()->isCold() && !(bool)disableEXRLDispatch && comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
                inlineEXtarget();
             break;
             }
