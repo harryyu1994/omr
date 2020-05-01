@@ -422,7 +422,7 @@ class TR_X86OpCode
          return (escape == ESCAPE_0F__) && (opcode == 0x01);
          }
       // TBuffer should only be one of the two: Estimator when calculating length, and Writer when generating binaries.
-      template <class TBuffer> inline typename TBuffer::cursor_t encode(typename TBuffer::cursor_t cursor, uint8_t rexbits) const;
+      template <class TBuffer> inline typename TBuffer::cursor_t encode(typename TBuffer::cursor_t cursor, uint8_t rexbits, TR::CodeGenerator *cg) const;
       // finalize instruction prefix information, currently only in-use for AVX instructions for VEX.vvvv field
       inline void finalize(uint8_t* cursor) const;
       };
@@ -463,7 +463,7 @@ class TR_X86OpCode
    // TBuffer should only be one of the two: Estimator when calculating length, and Writer when generating binaries.
    template <class TBuffer> inline typename TBuffer::cursor_t encode(typename TBuffer::cursor_t cursor, uint8_t rex) const
       {
-      return isPseudoOp() ? cursor : info().encode<TBuffer>(cursor, rex);
+      return isPseudoOp() ? cursor : info().encode<TBuffer>(cursor, rex, _cg);
       }
    // Instructions from Group 7 OpCode Extensions need special handling as they requires specific low 3 bits of ModR/M byte
    inline void CheckAndFinishGroup07(uint8_t* cursor) const;
@@ -472,11 +472,13 @@ class TR_X86OpCode
    static const OpCode_t _binaries[];
    static const uint32_t _properties[];
    static const uint32_t _properties1[];
+   TR::CodeGenerator*    _cg;
 
    public:
 
-   inline TR_X86OpCode()                 : _opCode(BADIA32Op) {}
-   inline TR_X86OpCode(TR_X86OpCodes op) : _opCode(op)        {}
+   inline TR_X86OpCode()                                        : _opCode(BADIA32Op), _cg(NULL) {}
+   inline TR_X86OpCode(TR::CodeGenerator* cg)                   : _opCode(BADIA32Op), _cg(cg) {}
+   inline TR_X86OpCode(TR_X86OpCodes op, TR::CodeGenerator* cg) : _opCode(op), _cg(cg)          {}
 
    inline const OpCode_t& info() const                   {return _binaries[_opCode]; }
    inline TR_X86OpCodes getOpCodeValue() const           {return _opCode;}

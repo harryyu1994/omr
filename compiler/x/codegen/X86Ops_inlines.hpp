@@ -22,7 +22,7 @@
 #ifndef X86OPS_INLINES_INCL
 #define X86OPS_INLINES_INCL
 
-template <typename TBuffer> inline typename TBuffer::cursor_t TR_X86OpCode::OpCode_t::encode(typename TBuffer::cursor_t cursor, uint8_t rexbits) const
+template <typename TBuffer> inline typename TBuffer::cursor_t TR_X86OpCode::OpCode_t::encode(typename TBuffer::cursor_t cursor, uint8_t rexbits, TR::CodeGenerator* cg) const
    {
    TBuffer buffer(cursor);
    if (isX87())
@@ -37,7 +37,7 @@ template <typename TBuffer> inline typename TBuffer::cursor_t TR_X86OpCode::OpCo
    TR::Instruction::REX rex(rexbits);
    rex.W = rex_w;
    // Use AVX if possible
-   if (supportsAVX() && TR::Compiler->target.cpu.supportsAVX())
+   if (supportsAVX() && cg->comp()->target().cpu.supportsAVX())
       {
       TR::Instruction::VEX<3> vex(rex, modrm_opcode);
       vex.m = escape;

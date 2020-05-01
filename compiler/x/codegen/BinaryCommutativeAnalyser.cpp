@@ -887,7 +887,7 @@ TR::Register *TR_X86BinaryCommutativeAnalyser::integerAddAnalyserImpl(TR::Node  
          }
 
       targetRegister = tempReg;
-      bool is64Bit = TR_X86OpCode(regRegOpCode).hasLongSource();
+      bool is64Bit = TR_X86OpCode(regRegOpCode, _cg).hasLongSource();
 
       // if eflags are required then we cannot use LEA as it doesn't set or use them
       if (needsEflags || (carry != 0))
