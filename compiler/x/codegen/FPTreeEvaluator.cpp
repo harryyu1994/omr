@@ -1041,10 +1041,10 @@ TR::Register *OMR::X86::TreeEvaluator::fpConvertToInt(TR::Node *node, TR::Symbol
    reStartLabel->setEndInternalControlFlow();
 
    bool optimizeF2IWithSSE = ( node->getOpCodeValue() == TR::f2i &&
-                               TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE) );
+                               cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) );
 
    bool optimizeD2IWithSSE2 = ( node->getOpCodeValue() == TR::d2i &&
-                                TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE2) );
+                                cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) );
 
    if (!optimizeF2IWithSSE && !optimizeD2IWithSSE2)
       {
@@ -2203,7 +2203,7 @@ bool OMR::X86::TreeEvaluator::canUseFCOMIInstructions(TR::Node *node, TR::CodeGe
    {
    TR::ILOpCodes cmpOp = node->getOpCodeValue();
 
-   return (!TR::Compiler->target.cpu.supportsFCOMIInstructions() ||
+   return (!cg->comp()->target().cpu.supportsFCOMIInstructions() ||
            cmpOp == TR::iffcmpneu ||
            cmpOp == TR::iffcmpeq  ||
            cmpOp == TR::ifdcmpneu ||
