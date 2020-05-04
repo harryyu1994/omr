@@ -99,6 +99,14 @@ TR::Register *TR_X86IntegerMultiplyDecomposer::decomposeIntegerMultiplier(int32_
          if (composition._subsequentShiftTooExpensive == false)
             {
             target = generateDecompositionInstructions(decompositionIndex, tempRegArraySize, tempRegArray);
+
+            TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_INTELCORE2) == cg()->getX86ProcessorInfo().isIntelCore2(), "isIntelCore2 failed\n");
+            TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_INTELNEHALEM) == cg()->getX86ProcessorInfo().isIntelNehalem(), "isIntelNehalem failed\n");
+            TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_INTELWESTMERE) == cg()->getX86ProcessorInfo().isIntelWestmere(), "isIntelWestmere failed\n");
+            TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_INTELSANDYBRIDGE) == cg()->getX86ProcessorInfo().isIntelSandyBridge(), "isIntelSandyBridge failed\n");
+            TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_AMDFAMILY15H) == cg()->getX86ProcessorInfo().isAMD15h(), "isAMD15h failed\n");
+            TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_AMDOPTERON) == cg()->getX86ProcessorInfo().isAMDOpteron(), "isAMDOpteron failed\n");
+
             if (shiftAmount < 3 &&
                !comp->target().cpu.is(OMR_PROCESSOR_X86_INTELCORE2) &&
                !comp->target().cpu.is(OMR_PROCESSOR_X86_INTELNEHALEM) &&
