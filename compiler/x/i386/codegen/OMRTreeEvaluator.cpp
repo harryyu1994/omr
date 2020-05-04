@@ -465,6 +465,8 @@ TR::Register *OMR::X86::I386::TreeEvaluator::lstoreEvaluator(TR::Node *node, TR:
                }
             else
                {
+               TR_ASSERT_FATAL(cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_CX8) == cg->getX86ProcessorInfo().supportsCMPXCHG8BInstruction(), "supportsCMPXCHG8BInstruction)() failed\n");
+
                TR_ASSERT(cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_CX8), "Assumption of support of the CMPXCHG8B instruction failed in lstoreEvaluator()" );
 
                eaxReg = cg->allocateRegister();
@@ -3099,6 +3101,8 @@ TR::Register *OMR::X86::I386::TreeEvaluator::performLload(TR::Node *node, TR::Me
 
       if (cg->useSSEForDoublePrecision() && performTransformation(comp, "O^O Using SSE for volatile load %s\n", cg->getDebug()->getName(node)))
          {
+         TR_ASSERT_FATAL(cg->comp()->target().cpu.isGenuineIntel() == cg->getX86ProcessorInfo().isGenuineIntel(), "isGenuineIntel() failed\n");
+
          if (cg->comp()->target().cpu.isGenuineIntel())
             {
             TR::Register *xmmReg = cg->allocateRegister(TR_FPR);
@@ -3145,6 +3149,8 @@ TR::Register *OMR::X86::I386::TreeEvaluator::performLload(TR::Node *node, TR::Me
          }
       else
          {
+         TR_ASSERT_FATAL(cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_CX8) == cg->getX86ProcessorInfo().supportsCMPXCHG8BInstruction(), "supportsCMPXCHG8BInstruction failed\n");
+
          TR_ASSERT(cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_CX8), "Assumption of support of the CMPXCHG8B instruction failed in performLload()" );
 
          TR::Register *ecxReg=NULL, *ebxReg=NULL;

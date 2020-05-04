@@ -108,6 +108,8 @@ public:
    bool supportsFeature(uint32_t feature);
    bool is_old_api(OMRProcessorArchitecture p);
    bool supports_feature_old_api(uint32_t feature);
+   void is_test(OMRProcessorArchitecture p);
+   void supports_feature_test(uint32_t feature);
    };
 }
 
