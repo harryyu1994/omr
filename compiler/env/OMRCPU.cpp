@@ -38,6 +38,9 @@ OMR::CPU::self()
 TR::CPU
 OMR::CPU::detect(OMRPortLibrary * const omrPortLib)
    {
+   if (omrPortLib == NULL)
+      return TR::CPU();
+
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc processorDescription;
    omrsysinfo_get_processor_description(&processorDescription);
@@ -98,12 +101,16 @@ OMR::CPU::initializeByHostQuery()
    }
 
 bool
+OMR::CPU::is(OMRProcessorArchitecture p)
+   {
+   return _processorDescription.processor == p;
+   }
+
+bool
 OMR::CPU::supportsFeature(uint32_t feature)
    {
-   if (TR::Compiler->omrPortLib == NULL)
-      return false;
-
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
    return TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature);
    }
+
 

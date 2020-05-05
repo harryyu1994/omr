@@ -103,6 +103,11 @@ public:
    bool prefersMultiByteNOP();
    bool supportsAVX();
 
+   // Will be removed once we no longer need the old processor detection apis
+   bool is(OMRProcessorArchitecture p);
+   bool supportsFeature(uint32_t feature);
+   bool is_old_api(OMRProcessorArchitecture p);
+   bool supports_feature_old_api(uint32_t feature);
    };
 }
 
