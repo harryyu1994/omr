@@ -991,7 +991,7 @@ OMR::X86::CodeGenerator::getSupportsOpCodeForAutoSIMD(TR::ILOpCode opcode, TR::D
          else
             return false;
       case TR::vmul:
-         if (dt == TR::Float || dt == TR::Double || (dt == TR::Int32 && self()->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1)))
+         if (dt == TR::Float || dt == TR::Double || (dt == TR::Int32 && TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1)))
             return true;
          else
             return false;
@@ -1047,14 +1047,14 @@ OMR::X86::CodeGenerator::getSupportsOpCodeForAutoSIMD(TR::ILOpCode opcode, TR::D
 bool
 OMR::X86::CodeGenerator::getSupportsEncodeUtf16LittleWithSurrogateTest()
    {
-   return self()->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1) &&
+   return TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1) &&
           !self()->comp()->getOption(TR_DisableSIMDUTF16LEEncoder);
    }
 
 bool
 OMR::X86::CodeGenerator::getSupportsEncodeUtf16BigWithSurrogateTest()
    {
-   return self()->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1) &&
+   return TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE4_1) &&
           !self()->comp()->getOption(TR_DisableSIMDUTF16BEEncoder);
    }
 
