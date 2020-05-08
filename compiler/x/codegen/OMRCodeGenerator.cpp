@@ -216,7 +216,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
       {
       _paddingTable = &_old32BitPaddingTable;
       }
-   else if (cTR::Compiler->target.cpu.isAuthenticAMD())
+   else if (TR::Compiler->target.cpu.isAuthenticAMD())
       _paddingTable = &_K8PaddingTable;
    else if (TR::Compiler->target.cpu.prefersMultiByteNOP() && !comp->getOption(TR_DisableZealousCodegenOpts))
       _paddingTable = &_intelMultiBytePaddingTable;
