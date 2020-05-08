@@ -2203,7 +2203,7 @@ bool OMR::X86::TreeEvaluator::canUseFCOMIInstructions(TR::Node *node, TR::CodeGe
    {
    TR::ILOpCodes cmpOp = node->getOpCodeValue();
 
-   return (!cg->comp()->target().cpu.supportsFCOMIInstructions() ||
+   return (!TR::Compiler->target.cpu.supportsFCOMIInstructions() ||
            cmpOp == TR::iffcmpneu ||
            cmpOp == TR::iffcmpeq  ||
            cmpOp == TR::ifdcmpneu ||

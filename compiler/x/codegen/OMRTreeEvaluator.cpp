@@ -4239,7 +4239,7 @@ TR::Register* OMR::X86::TreeEvaluator::FloatingPointAndVectorBinaryArithmeticEva
    TR::Node* operandNode0 = node->getChild(0);
    TR::Node* operandNode1 = node->getChild(1);
 
-   bool useRegMemForm = cg->comp()->target().cpu.supportsAVX();
+   bool useRegMemForm = TR::Compiler->target.cpu.supportsAVX();
 
    if (useRegMemForm)
       {
@@ -4260,7 +4260,7 @@ TR::Register* OMR::X86::TreeEvaluator::FloatingPointAndVectorBinaryArithmeticEva
    TR_X86OpCodes opCode = useRegMemForm ? BinaryArithmeticOpCodesForMem[type][arithmetic] : BinaryArithmeticOpCodesForReg[type][arithmetic];
    TR_ASSERT(opCode != BADIA32Op, "FloatingPointAndVectorBinaryArithmeticEvaluator: unsupported data type or arithmetic.");
 
-   if (cg->comp()->target().cpu.supportsAVX())
+   if (TR::Compiler->target.cpu.supportsAVX())
       {
       if (useRegMemForm)
          generateRegRegMemInstruction(opCode, node, resultReg, operandReg0, generateX86MemoryReference(operandNode1, cg), cg);
