@@ -1041,10 +1041,10 @@ TR::Register *OMR::X86::TreeEvaluator::fpConvertToInt(TR::Node *node, TR::Symbol
    reStartLabel->setEndInternalControlFlow();
 
    bool optimizeF2IWithSSE = ( node->getOpCodeValue() == TR::f2i &&
-                               cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) );
+                               TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE) );
 
    bool optimizeD2IWithSSE2 = ( node->getOpCodeValue() == TR::d2i &&
-                                cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) );
+                                TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE2) );
 
    if (!optimizeF2IWithSSE && !optimizeD2IWithSSE2)
       {

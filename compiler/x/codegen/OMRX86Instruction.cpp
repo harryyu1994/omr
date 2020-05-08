@@ -1467,7 +1467,7 @@ void insertUnresolvedReferenceInstructionMemoryBarrier(TR::CodeGenerator *cg, in
          }
       else if ((barrier & kMemoryFence) == kMemoryFence)
          fenceOp.setOpCodeValue(MFENCE);
-      else if ((barrier & kLoadFence) && cg->comp()->target().cpu.requiresLFence())
+      else if ((barrier & kLoadFence) && TR::Compiler->target.cpu.requiresLFence())
          fenceOp.setOpCodeValue(LFENCE);
       else if (barrier & kStoreFence)
          fenceOp.setOpCodeValue(SFENCE);

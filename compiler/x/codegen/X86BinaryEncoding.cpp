@@ -120,7 +120,7 @@ int32_t memoryBarrierRequired(
             else
                barrier |= kMemoryFence;
          }
-         else if (cg->comp()->target().cpu.requiresLFence())
+         else if (TR::Compiler->target.cpu.requiresLFence())
             barrier |= kLoadFence;
          }
       else
@@ -133,7 +133,7 @@ int32_t memoryBarrierRequired(
             else
                barrier |= kMemoryFence;
          }
-         else if (op.usesTarget() && cg->comp()->target().cpu.requiresLFence())
+         else if (op.usesTarget() && TR::Compiler->target.cpu.requiresLFence())
             barrier |= kLoadFence;
          }
       }
@@ -141,8 +141,8 @@ int32_t memoryBarrierRequired(
    static char *disableExplicitFences = feGetEnv("TR_DisableExplicitFences");
    if (barrier)
       {
-      if ((!cg->comp()->target().cpu.supportsLFence() ||
-           !cg->comp()->target().cpu.supportsMFence()) || disableExplicitFences)
+      if ((!TR::Compiler->target.cpu.supportsLFence() ||
+           !TR::Compiler->target.cpu.supportsMFence()) || disableExplicitFences)
          {
          if (op.supportsLockPrefix())
             barrier |= LockPrefix;

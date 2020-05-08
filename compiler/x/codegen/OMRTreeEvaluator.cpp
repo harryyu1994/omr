@@ -2721,7 +2721,7 @@ TR::Register *OMR::X86::TreeEvaluator::arraysetEvaluator(TR::Node *node, TR::Cod
    bool isShortConstantArrayWithZero = false;
 
    static bool isConstArraysetEnabled = (NULL == feGetEnv("TR_DisableConstArrayset"));
-   if (isConstArraysetEnabled && cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSSE3) && cg->comp()->target().is64Bit())
+   if (isConstArraysetEnabled && TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSSE3) && cg->comp()->target().is64Bit())
       {
       if (valueNode->getOpCode().isLoadConst() && !valueNode->getOpCode().isFloat() && !valueNode->getOpCode().isDouble())
          {

@@ -229,11 +229,11 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    //
 
 #if defined(TR_TARGET_X86) && !defined(J9HAMMER)
-   if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) && comp->target().cpu.testOSForSSESupport())
+   if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_SSE2) && TR::Compiler->target.cpu.testOSForSSESupport())
       supportsSSE2 = true;
 #endif // defined(TR_TARGET_X86) && !defined(J9HAMMER)
 
-   if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_RTM) && !comp->getOption(TR_DisableTM))
+   if (TR::Compiler->target.cpu.supportsFeature(OMR_FEATURE_X86_RTM) && !comp->getOption(TR_DisableTM))
       {
       /**
         * Due to many verions of Haswell and a small number of Broadwell have defects for TM and then disabled by Intel,
@@ -241,7 +241,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
         *
         * TODO: Need to figure out from which mode of Broadwell start supporting TM
         */
-      if (!comp->target().cpu.is(OMR_PROCESSOR_X86_INTELHASWELL))
+      if (!TR::Compiler->target.cpu.is(OMR_PROCESSOR_X86_INTELHASWELL))
          {
          if (comp->target().is64Bit())
             {
