@@ -35,7 +35,7 @@ TR::CPU
 OMR::Z::CPU::detect(OMRPortLibrary * const omrPortLib)
    {
    if (omrPortLib == NULL)
-      return cpu;
+      return TR::CPU();
 
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc processorDescription;
