@@ -169,7 +169,7 @@ public:
     * @param[in] p : the input processor type
     * @return true when current processor is the same as the input processor type
     */
-   bool is(OMRProcessorArchitecture p) { return _processorDescription.processor == p; }
+   bool is(OMRProcessorArchitecture p);
 
    /**
     * @brief Determines whether current processor is equal or newer than the input processor type
