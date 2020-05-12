@@ -189,7 +189,7 @@ genLogicalConversionForInt(TR::Node * node, TR::CodeGenerator * cg, TR::Register
       {
       generateRIEInstruction(cg, TR::InstOpCode::RISBGN, node, targetRegister, targetRegister, shift_amount, (int8_t)(63|0x80), 0);
       }
-   else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       generateRIEInstruction(cg, TR::InstOpCode::RISBG, node, targetRegister, targetRegister, shift_amount, (int8_t)(63|0x80), 0);
       }
