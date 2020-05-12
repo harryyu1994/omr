@@ -101,6 +101,16 @@ public:
    bool supportsLFence();
    bool supportsSFence();
    bool prefersMultiByteNOP();
+   bool supportsAVX();
+
+   // Will be removed once we no longer need the old processor detection apis
+   bool is(OMRProcessorArchitecture p);
+   bool is_old_api(OMRProcessorArchitecture p);
+   void is_test(OMRProcessorArchitecture p);
+
+   bool supportsFeature(uint32_t feature);
+   bool supports_feature_old_api(uint32_t feature);
+   void supports_feature_test(uint32_t feature);
    };
 }
 
