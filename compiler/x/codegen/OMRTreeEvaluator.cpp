@@ -2721,7 +2721,7 @@ TR::Register *OMR::X86::TreeEvaluator::arraysetEvaluator(TR::Node *node, TR::Cod
    bool isShortConstantArrayWithZero = false;
 
    static bool isConstArraysetEnabled = (NULL == feGetEnv("TR_DisableConstArrayset"));
-   if (isConstArraysetEnabled && cg->getX86ProcessorInfo().supportsSSSE3() && cg->comp()->target().is64Bit())
+   if (isConstArraysetEnabled && cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSSE3) && cg->comp()->target().is64Bit())
       {
       if (valueNode->getOpCode().isLoadConst() && !valueNode->getOpCode().isFloat() && !valueNode->getOpCode().isDouble())
          {
@@ -4260,7 +4260,7 @@ TR::Register* OMR::X86::TreeEvaluator::FloatingPointAndVectorBinaryArithmeticEva
    TR_X86OpCodes opCode = useRegMemForm ? BinaryArithmeticOpCodesForMem[type][arithmetic] : BinaryArithmeticOpCodesForReg[type][arithmetic];
    TR_ASSERT(opCode != BADIA32Op, "FloatingPointAndVectorBinaryArithmeticEvaluator: unsupported data type or arithmetic.");
 
-   if (TR::CodeGenerator::getX86ProcessorInfo().supportsAVX())
+   if (cg->comp()->target().cpu.supportsAVX())
       {
       if (useRegMemForm)
          generateRegRegMemInstruction(opCode, node, resultReg, operandReg0, generateX86MemoryReference(operandNode1, cg), cg);
