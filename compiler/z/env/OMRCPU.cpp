@@ -90,6 +90,110 @@ OMR::Z::CPU::detect(OMRPortLibrary * const omrPortLib)
    return TR::CPU(processorDescription);
    }
 
+
+bool
+OMR::Z::CPU::isAtLeast(OMRProcessorArchitecture p)
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return self()->is_at_least_old_api(p);
+
+   return _processorDescription.processor == p;
+   }
+
+bool
+OMR::Z::CPU::supportsFeature(uint32_t feature)
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return self()->supports_feature_old_api(feature);
+
+   OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
+   return TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature);
+   }
+
+bool
+OMR::Z::CPU::is_at_least_old_api(OMRProcessorArchitecture p)
+   {
+   bool ans = false;
+   switch(p)
+      {
+      case OMR_PROCESSOR_S390_Z10:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z10);
+         break;
+      case OMR_PROCESSOR_S390_Z196:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z196);
+         break;
+      case OMR_PROCESSOR_S390_ZEC12:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::zEC12);
+         break;
+      case OMR_PROCESSOR_S390_Z13:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z13);
+         break;
+      case OMR_PROCESSOR_S390_Z14:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z14);
+         break;
+      case OMR_PROCESSOR_S390_Z15:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z15);
+         break;
+      case OMR_PROCESSOR_S390_ZNEXT:
+         ans = TR::Compiler->target.cpu.getSupportsArch(TR::CPU::zNext);
+         break;
+      default:
+         TR_ASSERT_FATAL(false, "Unknown processor!\n");
+      }
+   return ans;
+   }
+
+bool
+OMR::Z::CPU::supports_feature_old_api(uint32_t feature)
+   {
+   bool supported = false;
+   switch(feature)
+      {
+      case OMR_FEATURE_S390_HIGH_WORD:
+         supported = TR::Compiler->target.cpu.getSupportsHighWordFacility();
+         break;
+      case OMR_FEATURE_S390_DFP:
+         supported = TR::Compiler->target.cpu.getSupportsDecimalFloatingPointFacility();
+         break;
+      case OMR_FEATURE_S390_FPE:
+         supported = TR::Compiler->target.cpu.getSupportsFloatingPointExtensionFacility();
+         break;
+      case OMR_FEATURE_S390_TE:
+         supported = TR::Compiler->target.cpu.getSupportsTransactionalMemoryFacility();
+         break;
+      case OMR_FEATURE_S390_RI:
+         supported = TR::Compiler->target.cpu.getSupportsRuntimeInstrumentationFacility();
+         break;
+      case OMR_FEATURE_S390_VECTOR_FACILITY:
+         supported = TR::Compiler->target.cpu.getSupportsVectorFacility();
+         break;
+      case OMR_FEATURE_S390_VECTOR_PACKED_DECIMAL:
+         supported = TR::Compiler->target.cpu.getSupportsVectorPackedDecimalFacility();
+         break;
+      case OMR_FEATURE_S390_MISCELLANEOUS_INSTRUCTION_EXTENSION_3:
+         supported = TR::Compiler->target.cpu.getSupportsMiscellaneousInstructionExtensions3Facility();
+         break;
+      case OMR_FEATURE_S390_VECTOR_FACILITY_ENHANCEMENT_2:
+         supported = TR::Compiler->target.cpu.getSupportsVectorFacilityEnhancement2();
+         break;
+      case OMR_FEATURE_S390_VECTOR_PACKED_DECIMAL_ENHANCEMENT_FACILITY:
+         supported = TR::Compiler->target.cpu.getSupportsVectorPackedDecimalEnhancementFacility();
+         break;
+      case OMR_FEATURE_S390_GUARDED_STORAGE:
+         supported = TR::Compiler->target.cpu.getSupportsGuardedStorageFacility();
+         break;
+      case OMR_FEATURE_S390_MISCELLANEOUS_INSTRUCTION_EXTENSION_2:
+         supported = TR::Compiler->target.cpu.getSupportsMiscellaneousInstructionExtensions2Facility();
+         break;
+      case OMR_FEATURE_S390_VECTOR_FACILITY_ENHANCEMENT_1:
+         supported = TR::Compiler->target.cpu.getSupportsVectorFacilityEnhancement1();
+         break;
+      default:
+         TR_ASSERT_FATAL(false, "Unknown processor feature!\n");
+      }
+   return supported;
+   }
+
 const char*
 OMR::Z::CPU::getProcessorName(int32_t machineId)
    {

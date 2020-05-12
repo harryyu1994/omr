@@ -277,6 +277,11 @@ class OMR_EXTENSIBLE CPU : public OMR::CPU
     */
    bool isTargetWithinBranchRelativeRILRange(intptr_t targetAddress, intptr_t sourceAddress);
 
+   bool isAtLeast(OMRProcessorArchitecture p);
+   bool supportsFeature(uint32_t feature);
+   bool is_at_least_old_api(OMRProcessorArchitecture p);
+   bool supports_feature_old_api(uint32_t feature);
+
    protected:
 
    CPU() : OMR::CPU(), _supportedArch(z9) {}
