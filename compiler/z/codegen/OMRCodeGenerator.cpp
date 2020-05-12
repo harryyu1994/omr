@@ -392,7 +392,7 @@ bool OMR::Z::CodeGenerator::canTransformUnsafeCopyToArrayCopy()
 
 bool OMR::Z::CodeGenerator::supportsDirectIntegralLoadStoresFromLiteralPool()
    {
-   return self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10);
+   return self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10);
    }
 
 OMR::Z::CodeGenerator::CodeGenerator()
@@ -495,7 +495,7 @@ OMR::Z::CodeGenerator::CodeGenerator()
    self()->setSupportsSearchCharString(); // CISC Transformation into SRSTU loop - only on z9.
    self()->setSupportsTranslateAndTestCharString(); // CISC Transformation into TRTE loop - only on z6.
 
-   if (self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   if (self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       self()->setSupportsTranslateAndTestCharString();
 
@@ -846,7 +846,7 @@ OMR::Z::CodeGenerator::mulDecompositionCostIsJustified(int32_t numOfOperations, 
             traceMsg(self()->comp(), "MulDecomp cost is too high. numCycle=%i(max:3)\n", numCycles);
       return numCycles <= 3;
       }
-   else if (self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   else if (self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       int32_t numCycles = 0;
       numCycles = numOfOperations+1;
@@ -968,7 +968,7 @@ OMR::Z::CodeGenerator::isAddMemoryUpdate(TR::Node * node, TR::Node * valueChild)
    {
    static char * disableASI = feGetEnv("TR_DISABLEASI");
 
-   if (self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   if (self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       if (!disableASI && self()->isMemoryUpdate(node) && valueChild->getSecondChild()->getOpCode().isLoadConst())
          {
@@ -1532,7 +1532,7 @@ OMR::Z::CodeGenerator::isLitPoolFreeForAssignment()
       {
       litPoolRegIsFree = true;
       }
-   else if (self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) && !self()->anyLitPoolSnippets())
+   else if (self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10) && !self()->anyLitPoolSnippets())
       {
       litPoolRegIsFree = true;
       }
@@ -2418,7 +2418,7 @@ OMR::Z::CodeGenerator::doBinaryEncoding()
    data.estimate = self()->setEstimatedLocationsForSnippetLabels(data.estimate);
    // need to reset constant data snippets offset for inlineEXTarget peephole optimization
    static char * disableEXRLDispatch = feGetEnv("TR_DisableEXRLDispatch");
-   if (!(bool)disableEXRLDispatch && self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   if (!(bool)disableEXRLDispatch && self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       _extentOfLitPool = self()->setEstimatedOffsetForConstantDataSnippets();
       }
@@ -4548,7 +4548,7 @@ bool OMR::Z::CodeGenerator::isActiveCompareCC(TR::InstOpCode::Mnemonic opcd, TR:
       TR::Register* ccSrcReg = ccInst->srcRegArrElem(0);
 
       // On z10 trueCompElimination may swap the previous compare operands, so give up early
-      if (self()->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) &&
+      if (self()->comp()->target().cpu.getSupportsArch(TR::CPU::z10) &&
           !self()->comp()->target().cpu.getSupportsArch(TR::CPU::z196))
          {
          if (tReg->getKind() != TR_FPR)
