@@ -127,7 +127,7 @@ public:
    TR_Processor id() { return _processor; }
    bool is(TR_Processor p) { return _processor == p; }
    bool isNot(TR_Processor p) { return _processor != p; }
-   bool isAtLeast(TR_Processor p) { return _processor >= p; }
+   bool isAtLeast_old(TR_Processor p) { return _processor >= p; }
    bool isLaterThan(TR_Processor p) { return _processor > p; }
    bool isEarlierThan(TR_Processor p) { return _processor < p; }
    bool isAtMost(TR_Processor p) { return _processor <= p; }
