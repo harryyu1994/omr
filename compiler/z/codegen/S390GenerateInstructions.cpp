@@ -2315,7 +2315,7 @@ generateRegLitRefInstruction(TR::CodeGenerator * cg, TR::InstOpCode::Mnemonic op
    TR::S390RILInstruction *LRLinst = 0;
    if (cg->isLiteralPoolOnDemandOn() && (base == 0))
       {
-      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) && op == TR::InstOpCode::L)
+      if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10) && op == TR::InstOpCode::L)
          {
          targetsnippet = cg->findOrCreate4ByteConstant(node, imm);
          LRLinst = (TR::S390RILInstruction *) generateRILInstruction(cg, TR::InstOpCode::LRL, node, treg, targetsnippet, 0);
@@ -2388,7 +2388,7 @@ generateRegLitRefInstruction(TR::CodeGenerator * cg, TR::InstOpCode::Mnemonic op
    TR::Instruction * cursor;
    TR::Compilation *comp = cg->comp();
 
-   if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       if (op == TR::InstOpCode::LG || op == TR::InstOpCode::L)
          {
@@ -2531,7 +2531,7 @@ generateRegLitRefInstruction(TR::CodeGenerator * cg, TR::InstOpCode::Mnemonic op
       }
    else if (cg->isLiteralPoolOnDemandOn() && (base == 0))
       {
-      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10) && op == TR::InstOpCode::LG)
+      if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10) && op == TR::InstOpCode::LG)
          {
          targetsnippet = cg->findOrCreate8ByteConstant(node, imm);
          LGRLinst = (TR::S390RILInstruction *) generateRILInstruction(cg, TR::InstOpCode::LGRL, node, treg, targetsnippet, 0);
@@ -3066,7 +3066,7 @@ void generateShiftThenKeepSelected64Bit(TR::Node * node, TR::CodeGenerator *cg,
       {
       generateRIEInstruction(cg, TR::InstOpCode::RISBGN, node, targetRegister, sourceRegister, fromBit, toBit|0x80, shiftAmount);
       }
-   else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
+   else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
       {
       generateRIEInstruction(cg, TR::InstOpCode::RISBG, node, targetRegister, sourceRegister, fromBit, toBit|0x80, shiftAmount);
       }
