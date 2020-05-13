@@ -294,13 +294,12 @@ OMR::Compilation::Compilation(
    _gpuPtxCount(0),
    _bitVectorPool(self()),
    _typeLayoutMap((LayoutComparator()), LayoutAllocator(self()->region())),
-   _target(TR::Compiler->target),
    _tlsManager(*self())
    {
-#if defined(TR_TARGET_X86)   
    if (self()->compileRelocatableCode())
       _target = TR::Compiler->relocatableTarget;
-#endif
+   else
+      _target = TR::Compiler->target;
 
    //Avoid expensive initialization and uneeded option checking if we are doing AOT Loads
    if (_optimizationPlan && _optimizationPlan->getIsAotLoad())

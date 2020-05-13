@@ -272,7 +272,6 @@ OMR::X86::CPU::supportsFeature(uint32_t feature)
    if (TR::Compiler->omrPortLib == NULL)
       return self()->supports_feature_old_api(feature);
    self()->supports_feature_test(feature);
-   
 
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
    return TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature);
