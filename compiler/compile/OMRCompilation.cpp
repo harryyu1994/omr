@@ -296,10 +296,7 @@ OMR::Compilation::Compilation(
    _typeLayoutMap((LayoutComparator()), LayoutAllocator(self()->region())),
    _tlsManager(*self())
    {
-   if (self()->compileRelocatableCode())
-      _target = TR::Compiler->relocatableTarget;
-   else
-      _target = TR::Compiler->target;
+   _target = TR::Compiler->relocatableTarget;
 
    //Avoid expensive initialization and uneeded option checking if we are doing AOT Loads
    if (_optimizationPlan && _optimizationPlan->getIsAotLoad())
