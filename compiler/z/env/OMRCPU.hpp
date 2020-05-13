@@ -281,6 +281,8 @@ class OMR_EXTENSIBLE CPU : public OMR::CPU
    bool supportsFeature(uint32_t feature);
    bool is_at_least_old_api(OMRProcessorArchitecture p);
    bool supports_feature_old_api(uint32_t feature);
+   void is_at_least_test(OMRProcessorArchitecture p);
+   void supports_feature_test(uint32_t feature);
 
    protected:
 

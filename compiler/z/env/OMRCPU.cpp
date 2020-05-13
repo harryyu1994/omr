@@ -34,6 +34,9 @@
 TR::CPU
 OMR::Z::CPU::detect(OMRPortLibrary * const omrPortLib)
    {
+   if (omrPortLib == NULL)
+      return TR::CPU();
+
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc processorDescription;
    omrsysinfo_get_processor_description(&processorDescription);
@@ -96,8 +99,9 @@ OMR::Z::CPU::isAtLeast(OMRProcessorArchitecture p)
    {
    if (TR::Compiler->omrPortLib == NULL)
       return self()->is_at_least_old_api(p);
+   self()->is_at_least_test(p);
 
-   return _processorDescription.processor == p;
+   return _processorDescription.processor >= p;
    }
 
 bool
@@ -105,10 +109,97 @@ OMR::Z::CPU::supportsFeature(uint32_t feature)
    {
    if (TR::Compiler->omrPortLib == NULL)
       return self()->supports_feature_old_api(feature);
+   self()->supports_feature_test(feature);
 
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
    return TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature);
    }
+
+void
+OMR::Z::CPU::is_at_least_test(OMRProcessorArchitecture p)
+   {
+   switch(p)
+      {
+      case OMR_PROCESSOR_S390_Z10:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z10) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_Z10");
+         break;
+      case OMR_PROCESSOR_S390_Z196:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z196) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_Z196");
+         break;
+      case OMR_PROCESSOR_S390_ZEC12:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::zEC12) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_ZEC12");
+         break;
+      case OMR_PROCESSOR_S390_Z13:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z13) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_Z13");
+         break;
+      case OMR_PROCESSOR_S390_Z14:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z14) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_Z14");
+         break;
+      case OMR_PROCESSOR_S390_Z15:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::z15) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_Z15");
+         break;
+      case OMR_PROCESSOR_S390_ZNEXT:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsArch(TR::CPU::zNext) == (_processorDescription.processor >= p), "OMR_PROCESSOR_S390_ZNEXT");
+         break;
+      default:
+         TR_ASSERT_FATAL(false, "Unknown processor!\n");
+      }
+   return;
+   }
+
+void
+OMR::Z::CPU::supports_feature_test(uint32_t feature)
+   {
+   OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
+   bool ans = (TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature));
+
+   switch(feature)
+      {
+      case OMR_FEATURE_S390_HIGH_WORD:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsHighWordFacility() == ans, "getSupportsHighWordFacility");
+         break;
+      case OMR_FEATURE_S390_DFP:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsDecimalFloatingPointFacility() == ans, "getSupportsDecimalFloatingPointFacility");
+         break;
+      case OMR_FEATURE_S390_FPE:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsFloatingPointExtensionFacility() == ans, "getSupportsFloatingPointExtensionFacility");
+         break;
+      case OMR_FEATURE_S390_TE:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsTransactionalMemoryFacility() == ans, "getSupportsTransactionalMemoryFacility");
+         break;
+      case OMR_FEATURE_S390_RI:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsRuntimeInstrumentationFacility() == ans, "getSupportsRuntimeInstrumentationFacility");
+         break;
+      case OMR_FEATURE_S390_VECTOR_FACILITY:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsVectorFacility() == ans, "getSupportsVectorFacility");
+         break;
+      case OMR_FEATURE_S390_VECTOR_PACKED_DECIMAL:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsVectorPackedDecimalFacility() == ans, "getSupportsVectorPackedDecimalFacility");
+         break;
+      case OMR_FEATURE_S390_MISCELLANEOUS_INSTRUCTION_EXTENSION_3:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsMiscellaneousInstructionExtensions3Facility() == ans, "getSupportsMiscellaneousInstructionExtensions3Facility");
+         break;
+      case OMR_FEATURE_S390_VECTOR_FACILITY_ENHANCEMENT_2:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsVectorFacilityEnhancement2() == ans, "getSupportsVectorFacilityEnhancement2");
+         break;
+      case OMR_FEATURE_S390_VECTOR_PACKED_DECIMAL_ENHANCEMENT_FACILITY:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsVectorPackedDecimalEnhancementFacility() == ans, "getSupportsVectorPackedDecimalEnhancementFacility");
+         break;
+      case OMR_FEATURE_S390_GUARDED_STORAGE:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsGuardedStorageFacility() == ans, "getSupportsGuardedStorageFacility");
+         break;
+      case OMR_FEATURE_S390_MISCELLANEOUS_INSTRUCTION_EXTENSION_2:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsMiscellaneousInstructionExtensions2Facility() == ans, "getSupportsMiscellaneousInstructionExtensions2Facility");
+         break;
+      case OMR_FEATURE_S390_VECTOR_FACILITY_ENHANCEMENT_1:
+         TR_ASSERT_FATAL(TR::Compiler->target.cpu.getSupportsVectorFacilityEnhancement1() == ans, "getSupportsVectorFacilityEnhancement1");
+         break;
+      default:
+         TR_ASSERT_FATAL(false, "Unknown feature!\n");
+      }
+   return;
+   }
+
 
 bool
 OMR::Z::CPU::is_at_least_old_api(OMRProcessorArchitecture p)

@@ -54,7 +54,7 @@ class OMR_EXTENSIBLE CompilerEnv
 
 public:
 
-   CompilerEnv(TR::RawAllocator raw, const TR::PersistentAllocatorKit &persistentAllocatorKit);
+   CompilerEnv(TR::RawAllocator raw, const TR::PersistentAllocatorKit &persistentAllocatorKit, OMRPortLibrary* const omrPortLib=NULL);
 
    TR::CompilerEnv *self();
 
