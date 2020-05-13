@@ -120,7 +120,7 @@ OMR::CompilerEnv::initializeTargetEnvironment()
 
    // Initialize the target CPU by querying the host processor
    //
-   host.cpu = TR::CPU::detect(TR::Compiler->omrPortLib);
+   target.cpu = TR::CPU::detect(TR::Compiler->omrPortLib);
    target.cpu.initializeByHostQuery();
 
    // Target major operating system
