@@ -1384,7 +1384,7 @@ generateS390ImmOp(TR::CodeGenerator * cg,
             {
             ei_immOp = TR::InstOpCode::CGFI;
             }
-         else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+         else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
             {
             memOp = TR::InstOpCode::CGRL;
             }
@@ -1394,7 +1394,7 @@ generateS390ImmOp(TR::CodeGenerator * cg,
             {
             ei_immOp = TR::InstOpCode::CLGFI;
             }
-         else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+         else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
             {
             memOp = TR::InstOpCode::CLGRL;
             }
@@ -1408,7 +1408,7 @@ generateS390ImmOp(TR::CodeGenerator * cg,
             {
             ei_immOp = TR::InstOpCode::LLILF;
             }
-         else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+         else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
             {
             memOp = TR::InstOpCode::LGRL;
             }
@@ -9463,7 +9463,7 @@ OMR::Z::TreeEvaluator::loadaddrEvaluator(TR::Node * node, TR::CodeGenerator * cg
       litpool->setUnresolvedDataSnippet(uds);
 
       TR::S390RILInstruction * lrlInstr = NULL;
-      if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
          {
          lrlInstr = static_cast<TR::S390RILInstruction *>(generateRILInstruction(cg, TR::InstOpCode::getLoadRelativeLongOpCode(), node, targetRegister, reinterpret_cast<void*>(0xBABE), 0));
          uds->setDataReferenceInstruction(lrlInstr);
@@ -12958,7 +12958,7 @@ TR::Register *arraycmpWithPadHelper::generateCLCL()
    {
    if (cg->comp()->target().is64Bit())
       {
-      if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
          {
          generateRIEInstruction(cg, TR::InstOpCode::ROSBG, node, source2LenReg, paddingReg, 32, 39, 24);
          }

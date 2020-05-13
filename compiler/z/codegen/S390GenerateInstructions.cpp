@@ -2388,7 +2388,7 @@ generateRegLitRefInstruction(TR::CodeGenerator * cg, TR::InstOpCode::Mnemonic op
    TR::Instruction * cursor;
    TR::Compilation *comp = cg->comp();
 
-   if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+   if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
       {
       if (op == TR::InstOpCode::LG || op == TR::InstOpCode::L)
          {
@@ -3066,7 +3066,7 @@ void generateShiftThenKeepSelected64Bit(TR::Node * node, TR::CodeGenerator *cg,
       {
       generateRIEInstruction(cg, TR::InstOpCode::RISBGN, node, targetRegister, sourceRegister, fromBit, toBit|0x80, shiftAmount);
       }
-   else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+   else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
       {
       generateRIEInstruction(cg, TR::InstOpCode::RISBG, node, targetRegister, sourceRegister, fromBit, toBit|0x80, shiftAmount);
       }

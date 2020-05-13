@@ -1202,7 +1202,7 @@ genericLongShiftSingle(TR::Node * node, TR::CodeGenerator * cg, TR::InstOpCode::
       {
       int32_t value = secondChild->getInt();
 
-      if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
          {
          // Generate RISBG for lshl + i2l sequence
          if (node->getOpCodeValue() == TR::lshl)
@@ -1446,7 +1446,7 @@ genericRotateLeft(TR::Node * node, TR::CodeGenerator * cg)
    TR::Node * firstChild = node->getFirstChild();
    TR::Node * secondChild = node->getSecondChild();
 
-   if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+   if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
       {
       if (node->getOpCodeValue() == TR::lor)
          {
@@ -1637,7 +1637,7 @@ genericRotateLeft(TR::Node * node, TR::CodeGenerator * cg)
 TR::Register *
 genericRotateAndInsertHelper(TR::Node * node, TR::CodeGenerator * cg)
    {
-   if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+   if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
       {
       TR::Node * firstChild = node->getFirstChild();
       TR::Node * secondChild = node->getSecondChild();
@@ -1802,7 +1802,7 @@ genericRotateAndInsertHelper(TR::Node * node, TR::CodeGenerator * cg)
 TR::Register *
 OMR::Z::TreeEvaluator::tryToReplaceShiftLandWithRotateInstruction(TR::Node * node, TR::CodeGenerator * cg, int32_t shiftAmount, bool isSignedShift)
    {
-   if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+   if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
       {
       TR::Node * firstChild = node->getFirstChild();
       TR::Node * secondChild = node->getSecondChild();

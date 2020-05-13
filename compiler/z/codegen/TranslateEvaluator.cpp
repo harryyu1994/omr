@@ -173,7 +173,7 @@ TR::Register *inlineTrtEvaluator(
          {
          generateRIEInstruction(cg, TR::InstOpCode::RISBGN, node,  conditionCodeReg, r2Reg, 48, 55, 8);
          }
-      else if (cg->comp()->target().cpu.getSupportsArch(TR::CPU::z10))
+      else if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_S390_Z10))
          {
          generateRIEInstruction(cg, TR::InstOpCode::RISBG, node,  conditionCodeReg, r2Reg, 48, 55, 8);
          }
