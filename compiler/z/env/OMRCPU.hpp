@@ -127,7 +127,7 @@ class OMR_EXTENSIBLE CPU : public OMR::CPU
 
    /** \brief
     *     Determines whether the Transactional Memory (TM) facility is available on the current processor.
-    *     Alias of getSupportsTransactionalMemoryFacility() as a platform agnostic query.
+    *     Alias of supportsFeature(OMR_FEATURE_S390_TE) as a platform agnostic query.
     */
    bool supportsTransactionalMemoryInstructions();
    

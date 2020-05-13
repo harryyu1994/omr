@@ -294,7 +294,7 @@ OMR::Z::CPU::getSupportsHardwareSQRT()
 bool
 OMR::Z::CPU::hasPopulationCountInstruction()
    {
-   return self()->getSupportsMiscellaneousInstructionExtensions3Facility();
+   return self()->supportsFeature(OMR_FEATURE_S390_MISCELLANEOUS_INSTRUCTION_EXTENSION_3);
    }
 
 bool
@@ -369,7 +369,7 @@ OMR::Z::CPU::getSupportsTransactionalMemoryFacility()
 bool
 OMR::Z::CPU::supportsTransactionalMemoryInstructions()
    {
-   return self()->getSupportsTransactionalMemoryFacility();
+   return self()->supportsFeature(OMR_FEATURE_S390_TE);
    }
 
 
