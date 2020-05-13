@@ -269,7 +269,7 @@ TR::Register *OMR::Power::TreeEvaluator::compareIntsForOrder(TR::InstOpCode::Mne
       TR::Node *thirdChild = node->getChild(2);
       TR_ASSERT(thirdChild->getOpCodeValue() == TR::GlRegDeps, "The third child of a compare is assumed to be a TR::GlRegDeps, but wasn't");
       cg->evaluate(thirdChild);
-      if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+      if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
          generateDepConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg,
                generateRegisterDependencyConditions(cg, thirdChild, 0));
       else
@@ -279,7 +279,7 @@ TR::Register *OMR::Power::TreeEvaluator::compareIntsForOrder(TR::InstOpCode::Mne
       }
    else
       {
-      if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+      if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
          generateConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg);
       else
          generateConditionalBranchInstruction(cg, branchOp, node, dstLabel, condReg);
@@ -448,14 +448,14 @@ static TR::Register *compareLongsForOrderWithAnalyser(TR::InstOpCode::Mnemonic b
       generateLabelInstruction(cg, TR::InstOpCode::label, node, label1);
       if (deps)
          {
-         if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+         if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
             generateDepConditionalBranchInstruction(cg, branchOp, likeliness, node, destinationLabel, condReg, deps);
          else
             generateDepConditionalBranchInstruction(cg, branchOp, node, destinationLabel, condReg, deps);
          }
       else
          {
-         if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+         if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
             generateConditionalBranchInstruction(cg, branchOp, likeliness, node, destinationLabel, condReg);
          else
             generateConditionalBranchInstruction(cg, branchOp, node, destinationLabel, condReg);
@@ -535,7 +535,7 @@ TR::Register *OMR::Power::TreeEvaluator::compareLongsForOrder(TR::InstOpCode::Mn
          TR::Node *thirdChild = node->getChild(2);
          TR_ASSERT(thirdChild->getOpCodeValue() == TR::GlRegDeps, "The third child of a compare is assumed to be a TR::GlRegDeps, but wasn't");
          cg->evaluate(thirdChild);
-         if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+         if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
             generateDepConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg,
                   generateRegisterDependencyConditions(cg, thirdChild, 0));
          else
@@ -545,7 +545,7 @@ TR::Register *OMR::Power::TreeEvaluator::compareLongsForOrder(TR::InstOpCode::Mn
          }
       else
          {
-         if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+         if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
             generateConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg);
          else
             generateConditionalBranchInstruction(cg, branchOp, node, dstLabel, condReg);
@@ -1333,7 +1333,7 @@ if (cg->profiledPointersRequireRelocation() && secondChild->getOpCodeValue() == 
        {
        TR::Node *thirdChild = node->getChild(2);
        cg->evaluate(thirdChild);
-       if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+       if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
           generateDepConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg,
                 generateRegisterDependencyConditions(cg, thirdChild, 0));
        else
@@ -1344,7 +1344,7 @@ if (cg->profiledPointersRequireRelocation() && secondChild->getOpCodeValue() == 
        }
     else
        {
-       if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+       if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
           generateConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg);
        else
           generateConditionalBranchInstruction(cg, branchOp, node, dstLabel, condReg);
@@ -1539,7 +1539,7 @@ if (cg->profiledPointersRequireRelocation() && secondChild->getOpCodeValue() == 
          {
          thirdChild = node->getChild(2);
          cg->evaluate(thirdChild);
-         if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+         if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
             generateDepConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg,
                   generateRegisterDependencyConditions(cg, thirdChild, 0));
          else
@@ -1549,7 +1549,7 @@ if (cg->profiledPointersRequireRelocation() && secondChild->getOpCodeValue() == 
          }
       else
          {
-         if (isHint && cg->comp()->target().cpu.id() >= TR_PPCgp)
+         if (isHint && cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
             generateConditionalBranchInstruction(cg, branchOp, likeliness, node, dstLabel, condReg);
          else
             generateConditionalBranchInstruction(cg, branchOp, node, dstLabel, condReg);
@@ -2497,7 +2497,7 @@ TR::Register *OMR::Power::TreeEvaluator::lcmpEvaluator(TR::Node *node, TR::CodeG
       {
       if (secondChild->getOpCode().isLoadConst() && secondChild->getLongInt()==0)
          {
-         if (cg->comp()->target().cpu.id() >= TR_PPCp9)
+         if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_P9))
             {
             TR::Register *condReg = cg->allocateRegister(TR_CCR);
             generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::cmpi8, node, condReg, src1Reg, 0);
@@ -2518,7 +2518,7 @@ TR::Register *OMR::Power::TreeEvaluator::lcmpEvaluator(TR::Node *node, TR::CodeG
       else
          {
          TR::Register *src2Reg = cg->evaluate(secondChild);
-         if (cg->comp()->target().cpu.id() >= TR_PPCp9)
+         if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_P9))
             {
             TR::Register *condReg = cg->allocateRegister(TR_CCR);
             generateTrg1Src2Instruction(cg, TR::InstOpCode::cmp8, node, condReg, src1Reg, src2Reg);
@@ -3582,7 +3582,7 @@ OMR::Power::TreeEvaluator::generateNullTestInstructions(
          generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::cmpli8, node, condReg, trgReg, NULLVALUE);
       else
          generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::cmpli4, node, condReg, trgReg, NULLVALUE);
-      if (cg->comp()->target().cpu.id() >= TR_PPCgp)
+      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP))
          // use PPC AS branch hint
          gcPoint = generateDepConditionalBranchInstruction(cg, TR::InstOpCode::beql, PPCOpProp_BranchUnlikely, node, snippetLabel, condReg, conditions);
       else
@@ -3689,7 +3689,7 @@ TR::Register *OMR::Power::TreeEvaluator::ZEROCHKEvaluator(TR::Node *node, TR::Co
          generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::cmpi8, node, condReg, value, 0);
       else
          generateTrg1Src1ImmInstruction(cg, TR::InstOpCode::cmpi4, node, condReg, value, 0);
-      if (cg->comp()->target().cpu.id() >= TR_PPCgp) // Use PPC AS branch hint.
+      if (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP)) // Use PPC AS branch hint.
          generateConditionalBranchInstruction(cg, TR::InstOpCode::beq, PPCOpProp_BranchUnlikely, node, slowPathLabel, condReg);
       else
          generateConditionalBranchInstruction(cg, TR::InstOpCode::beq, node, slowPathLabel, condReg);

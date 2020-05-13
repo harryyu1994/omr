@@ -20,15 +20,122 @@
  *******************************************************************************/
 
 #include "env/CPU.hpp"
-
+#include "env/CompilerEnv.hpp"
 #include "env/Processors.hpp"
 #include "infra/Assert.hpp"
 
 bool
+OMR::Power::CPU::getPPCSupportsVMX()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+
+   return self()->supportsFeature(OMR_FEATURE_PPC_HAS_ALTIVEC);
+   }
+
+bool
+OMR::Power::CPU::getPPCSupportsVSX()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+
+   return self()->supportsFeature(OMR_FEATURE_PPC_HAS_VSX);
+   }
+
+bool
+OMR::Power::CPU::getPPCSupportsAES()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+
+   return self()->supportsFeature(OMR_FEATURE_PPC_HAS_ALTIVEC) && self()->isAtLeast(OMR_PROCESSOR_PPC_P8) && self()->supportsFeature(OMR_FEATURE_PPC_HAS_VSX);
+   }
+
+bool
+OMR::Power::CPU::getPPCSupportsTM()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+
+   return self()->supportsFeature(OMR_FEATURE_PPC_HTM);
+   }
+
+bool
+OMR::Power::CPU::hasPopulationCountInstruction()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+
+#if defined(J9OS_I5)
+   return ans;
+#endif
+
+   return self()->isAtLeast(OMR_PROCESSOR_PPC_P7);
+   }
+
+bool
+OMR::Power::CPU::supportsDecimalFloatingPoint()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      return false;
+   
+   return self()->supportsFeature(OMR_FEATURE_PPC_HAS_DFP);
+   }
+
+bool
 OMR::Power::CPU::getPPCis64bit()
    {
-   TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
-   return (self()->id() >= TR_FirstPPC64BitProcessor)? true : false;
+   if (TR::Compiler->omrPortLib == NULL)
+      {
+      TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
+      return self()->id() >= TR_FirstPPC64BitProcessor;
+      }
+
+   TR_ASSERT(self()->isAtLeast(OMR_PROCESSOR_PPC_FIRST) && self()->isAtMost(OMR_PROCESSOR_PPC_LAST), "Not a valid PPC Processor Type");
+   TR_ASSERT_FATAL((self()->id() >= TR_FirstPPCHwCopySignProcessor) == (self()->isAtLeast(OMR_PROCESSOR_PPC_HW_COPY_SIGN_FIRST)), "getPPCis64bit");
+   return self()->isAtLeast(OMR_PROCESSOR_PPC_FIRST);
+   }
+
+bool 
+OMR::Power::CPU::getSupportsHardwareSQRT()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      {
+      TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
+      return self()->id() >= TR_FirstPPCHwSqrtProcessor;
+      }
+
+   TR_ASSERT(self()->isAtLeast(OMR_PROCESSOR_PPC_FIRST) && self()->isAtMost(OMR_PROCESSOR_PPC_LAST), "Not a valid PPC Processor Type");
+   TR_ASSERT_FATAL((self()->id() >= TR_FirstPPCHwCopySignProcessor) == (self()->isAtLeast(OMR_PROCESSOR_PPC_HW_COPY_SIGN_FIRST)), "getSupportsHardwareSQRT");
+   return self()->isAtLeast(OMR_PROCESSOR_PPC_HW_SQRT_FIRST);
+   }
+
+bool
+OMR::Power::CPU::getSupportsHardwareRound()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      {
+      TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
+      return self()->id() >= TR_FirstPPCHwRoundProcessor;
+      }
+
+   TR_ASSERT(self()->isAtLeast(OMR_PROCESSOR_PPC_FIRST) && self()->isAtMost(OMR_PROCESSOR_PPC_LAST), "Not a valid PPC Processor Type");
+   TR_ASSERT_FATAL((self()->id() >= TR_FirstPPCHwCopySignProcessor) == (self()->isAtLeast(OMR_PROCESSOR_PPC_HW_COPY_SIGN_FIRST)), "getSupportsHardwareRound");
+   return self()->isAtLeast(OMR_PROCESSOR_PPC_HW_ROUND_FIRST);
+   }
+   
+bool
+OMR::Power::CPU::getSupportsHardwareCopySign()
+   {
+   if (TR::Compiler->omrPortLib == NULL)
+      {
+      TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
+      return self()->id() >= TR_FirstPPCHwCopySignProcessor;
+      }
+
+   TR_ASSERT(self()->isAtLeast(OMR_PROCESSOR_PPC_FIRST) && self()->isAtMost(OMR_PROCESSOR_PPC_LAST), "Not a valid PPC Processor Type");
+   TR_ASSERT_FATAL((self()->id() >= TR_FirstPPCHwCopySignProcessor) == (self()->isAtLeast(OMR_PROCESSOR_PPC_HW_COPY_SIGN_FIRST)), "getSupportsHardwareCopySign");
+   return self()->isAtLeast(OMR_PROCESSOR_PPC_HW_COPY_SIGN_FIRST);
    }
 
 bool
@@ -43,25 +150,4 @@ OMR::Power::CPU::isTargetWithinIFormBranchRange(intptr_t targetAddress, intptr_t
    intptr_t range = targetAddress - sourceAddress;
    return range <= self()->maxIFormBranchForwardOffset() &&
           range >= self()->maxIFormBranchBackwardOffset();
-   }
-
-bool 
-OMR::Power::CPU::getSupportsHardwareSQRT()
-   {
-   TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
-   return self()->id() >= TR_FirstPPCHwSqrtProcessor;
-   }
-
-bool
-OMR::Power::CPU::getSupportsHardwareRound()
-   {
-   TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
-   return self()->id() >= TR_FirstPPCHwRoundProcessor;
-   }
-   
-bool
-OMR::Power::CPU::getSupportsHardwareCopySign()
-   {
-   TR_ASSERT(self()->id() >= TR_FirstPPCProcessor && self()->id() <= TR_LastPPCProcessor, "Not a valid PPC Processor Type");
-   return self()->id() >= TR_FirstPPCHwCopySignProcessor;
    }

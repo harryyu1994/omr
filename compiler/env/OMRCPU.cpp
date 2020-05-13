@@ -38,6 +38,9 @@ OMR::CPU::self()
 TR::CPU
 OMR::CPU::detect(OMRPortLibrary * const omrPortLib)
    {
+   if (omrPortLib == NULL)
+      return TR::CPU();
+
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc processorDescription;
    omrsysinfo_get_processor_description(&processorDescription);
@@ -100,6 +103,12 @@ OMR::CPU::initializeByHostQuery()
 bool
 OMR::CPU::supportsFeature(uint32_t feature)
    {
+   if (TR::Compiler->omrPortLib == NULL)
+      {
+      TR_ASSERT_FATAL(false, "in supports feature without omrPortlib!\n");
+      return false;
+      }
+
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
    BOOLEAN supported = omrsysinfo_processor_has_feature(&_processorDescription, feature);
    return (TRUE == supported);

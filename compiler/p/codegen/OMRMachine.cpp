@@ -201,7 +201,7 @@ void OMR::Power::Machine::initREGAssociations()
    // Power8/SAR:  confine to the smallest set of registers we can get away, because map cache
    // Others:      neutral --- take Power6 way for now
 
-   int rollingAllocator = !(self()->cg()->comp()->target().cpu.id() == TR_PPCp8);
+   int rollingAllocator = !(self()->cg()->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P8));
 
 
    _inUseFPREnd = rollingAllocator?lastFPRv:0;
@@ -279,7 +279,7 @@ TR::RealRegister *OMR::Power::Machine::findBestFreeRegister(TR::Instruction *cur
    // For FPR/VSR/VRF
    if (rk == TR_FPR || rk == TR_VSX_SCALAR || rk == TR_VSX_VECTOR || rk == TR_VRF)
       {
-      int rollingAllocator = !(self()->cg()->comp()->target().cpu.id() == TR_PPCp8);
+      int rollingAllocator = !(self()->cg()->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P8));
 
       // Find the best in the used FPR set so far
       int i, idx;
@@ -395,7 +395,7 @@ TR::RealRegister *OMR::Power::Machine::findBestFreeRegister(TR::Instruction *cur
          iNew = interference & currentReg;
 
          //Inject interference for last four assignments to prevent write-after-write dependancy in same p6 dispatch group.
-         if(rk == TR_GPR && (self()->cg()->comp()->target().cpu.id() == TR_PPCp6))
+         if(rk == TR_GPR && (self()->cg()->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6)))
             {
             if (_lastGPRAssigned != -1)
                iNew |= currentReg & _lastGPRAssigned;
@@ -421,7 +421,7 @@ TR::RealRegister *OMR::Power::Machine::findBestFreeRegister(TR::Instruction *cur
             }
          }
       //Track the last four registers used for use in above interference injection.
-      if ((rk == TR_GPR) && (freeRegister != NULL) && (self()->cg()->comp()->target().cpu.id() == TR_PPCp6))
+      if ((rk == TR_GPR) && (freeRegister != NULL) && (self()->cg()->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6)))
          {
          _4thLastGPRAssigned = _3rdLastGPRAssigned;
          _3rdLastGPRAssigned = _2ndLastGPRAssigned;

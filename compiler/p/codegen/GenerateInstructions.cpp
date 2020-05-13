@@ -62,7 +62,7 @@ TR::Instruction *generateMvFprGprInstructions(TR::CodeGenerator *cg, TR::Node *n
    {
    TR::MemoryReference *tempMRStore1, *tempMRStore2, *tempMRLoad1, *tempMRLoad2;
    static bool disableDirectMove = feGetEnv("TR_disableDirectMove") ? true : false;
-   bool checkp8DirectMove = cg->comp()->target().cpu.id() >= TR_PPCp8 && !disableDirectMove && cg->comp()->target().cpu.getPPCSupportsVSX();
+   bool checkp8DirectMove = cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_P8) && !disableDirectMove && cg->comp()->target().cpu.getPPCSupportsVSX();
    bool isLittleEndian = cg->comp()->target().cpu.isLittleEndian();
 
    // it's fine if reg3 and reg2 are assigned in modes they are not used
@@ -166,7 +166,7 @@ TR::Instruction *generateMvFprGprInstructions(TR::CodeGenerator *cg, TR::Node *n
       else if (mode == gprLow2fpr)
          cursor = generateMemSrc1Instruction(cg, TR::InstOpCode::stw, node, tempMRStore1, reg1, cursor);
 
-      if ((nonops == false) && (cg->comp()->target().cpu.id() >= TR_PPCgp))
+      if ((nonops == false) && (cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_GP)))
          {
     	 // Insert 3 nops to break up the load/stores into separate groupings,
     	 // thus preventing a costly stall
@@ -208,7 +208,7 @@ TR::Instruction *generateInstruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnem
 
 TR::Instruction *generateAlignmentNopInstruction(TR::CodeGenerator *cg, TR::Node * n, uint32_t alignment, TR::Instruction *preced)
    {
-   auto op = cg->comp()->target().cpu.id() >= TR_PPCp6 ? TR::InstOpCode::genop : TR::InstOpCode::nop;
+   auto op = cg->comp()->target().cpu.isAtLeast(OMR_PROCESSOR_PPC_P6) ? TR::InstOpCode::genop : TR::InstOpCode::nop;
 
    if (preced)
       return new (cg->trHeapMemory()) TR::PPCAlignmentNopInstruction(op, n, alignment, preced, cg);
@@ -385,7 +385,7 @@ TR::Instruction *generateDepConditionalBranchInstruction(TR::CodeGenerator *cg, 
 TR::Instruction *generateTrg1Src1ImmInstruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, TR::Node * n,
    TR::Register *treg, TR::Register *s1reg, intptr_t imm, TR::Instruction *preced)
    {
-   if (cg->comp()->target().cpu.id() == TR_PPCp6 && TR::InstOpCode(op).isCompare())
+   if (cg->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6) && TR::InstOpCode(op).isCompare())
       treg->resetFlippedCCR();
    if (preced)
       return new (cg->trHeapMemory()) TR::PPCTrg1Src1ImmInstruction(op, n, treg, s1reg, imm, preced, cg);
@@ -395,7 +395,7 @@ TR::Instruction *generateTrg1Src1ImmInstruction(TR::CodeGenerator *cg, TR::InstO
 TR::Instruction *generateTrg1Src1ImmInstruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, TR::Node * n,
    TR::Register *treg, TR::Register *s1reg, TR::Register *cr0reg, int32_t imm, TR::Instruction *preced)
    {
-   if (cg->comp()->target().cpu.id() == TR_PPCp6)
+   if (cg->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6))
       cr0reg->resetFlippedCCR();
    if (preced)
       return new (cg->trHeapMemory()) TR::PPCTrg1Src1ImmInstruction(op, n,treg, s1reg, cr0reg, imm, preced, cg);
@@ -450,7 +450,7 @@ TR::Instruction *generateTrg1Src2Instruction(TR::CodeGenerator *cg, TR::InstOpCo
    {
    TR::Compilation * comp = cg->comp();
    static bool disableFlipCompare = feGetEnv("TR_DisableFlipCompare") != NULL;
-   if (!disableFlipCompare && cg->comp()->target().cpu.id() == TR_PPCp6 &&
+   if (!disableFlipCompare && cg->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6) &&
        TR::InstOpCode(op).isCompare() &&
        n->getOpCode().isBranch() && n->getOpCode().isBooleanCompare())
       {
@@ -476,7 +476,7 @@ TR::Instruction *generateTrg1Src2Instruction(TR::CodeGenerator *cg, TR::InstOpCo
 TR::Instruction *generateTrg1Src2Instruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, TR::Node * n,
    TR::Register *treg, TR::Register *s1reg, TR::Register *s2reg, TR::Register *cr0Reg, TR::Instruction *preced)
    {
-   if (cg->comp()->target().cpu.id() == TR_PPCp6)
+   if (cg->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6))
       cr0Reg->resetFlippedCCR();
    return new (cg->trHeapMemory()) TR::PPCTrg1Src2Instruction(op, n, treg, s1reg, s2reg, cr0Reg, preced, cg);
    }
@@ -508,7 +508,7 @@ TR::Instruction *generateTrg1Src1Imm2Instruction(TR::CodeGenerator *cg, TR::Inst
 TR::Instruction *generateTrg1Src1Imm2Instruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, TR::Node * n,
    TR::Register *trgReg, TR::Register *srcReg, TR::Register *cr0reg, int32_t imm1, int64_t imm2, TR::Instruction *preced)
    {
-   if (cg->comp()->target().cpu.id() == TR_PPCp6)
+   if (cg->comp()->target().cpu.is(OMR_PROCESSOR_PPC_P6))
       cr0reg->resetFlippedCCR();
    if (preced)
       return new (cg->trHeapMemory()) TR::PPCTrg1Src1Imm2Instruction(op, n, trgReg, srcReg, cr0reg, imm1, imm2, preced, cg);

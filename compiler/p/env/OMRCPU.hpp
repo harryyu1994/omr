@@ -48,7 +48,13 @@ class OMR_EXTENSIBLE CPU : public OMR::CPU
    {
 protected:
 
-   CPU() : OMR::CPU() {}
+   CPU() :
+         OMR::CPU()
+      {
+      _processorDescription.processor = OMR_PROCESSOR_PPC_UNKNOWN;
+      _processorDescription.physicalProcessor = OMR_PROCESSOR_PPC_UNKNOWN;
+      memset(_processorDescription.features, 0, OMRPORT_SYSINFO_FEATURES_SIZE*sizeof(uint32_t));
+      }
    CPU(const OMRProcessorDesc& processorDescription) : OMR::CPU(processorDescription) {}
 
 public:
@@ -58,10 +64,13 @@ public:
    bool getSupportsHardwareCopySign();
 
    bool getPPCis64bit();
-   bool getPPCSupportsVMX() { return false; }
-   bool getPPCSupportsVSX() { return false; }
-   bool getPPCSupportsAES() { return false; }
-   bool getPPCSupportsTM()  { return false; }
+   bool getPPCSupportsVMX();
+   bool getPPCSupportsVSX();
+   bool getPPCSupportsAES();
+   bool getPPCSupportsTM();
+
+   bool hasPopulationCountInstruction();
+   bool supportsDecimalFloatingPoint();
 
    /** @brief Determines whether the Transactional Memory (TM) facility is available on the current processor.
     *         Alias of getPPCSupportsTM() as a platform agnostic query.

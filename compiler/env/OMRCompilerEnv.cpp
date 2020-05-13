@@ -27,13 +27,14 @@
 
 OMR::CompilerEnv::CompilerEnv(
    TR::RawAllocator raw,
-   const TR::PersistentAllocatorKit &persistentAllocatorKit
+   const TR::PersistentAllocatorKit &persistentAllocatorKit,
+   OMRPortLibrary * const portLib
    ) :
       rawAllocator(raw),
       _initialized(false),
       _persistentAllocator(persistentAllocatorKit),
       regionAllocator(_persistentAllocator),
-      omrPortLib(NULL)
+      omrPortLib(portLib)
    {
    }
 
@@ -73,6 +74,7 @@ OMR::CompilerEnv::initializeHostEnvironment()
 
    // Initialize the host CPU by querying the host processor
    //
+   host.cpu = TR::CPU::detect(TR::Compiler->omrPortLib);
    host.cpu.initializeByHostQuery();
 
    // Host major operating system
@@ -118,6 +120,7 @@ OMR::CompilerEnv::initializeTargetEnvironment()
 
    // Initialize the target CPU by querying the host processor
    //
+   target.cpu = TR::CPU::detect(TR::Compiler->omrPortLib);
    target.cpu.initializeByHostQuery();
 
    // Target major operating system
