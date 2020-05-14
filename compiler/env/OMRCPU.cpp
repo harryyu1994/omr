@@ -38,8 +38,12 @@ OMR::CPU::self()
 TR::CPU
 OMR::CPU::detect(OMRPortLibrary * const omrPortLib)
    {
+   TR_ASSERT_FATAL(false, "Z should not use this one!\n");
+
    if (omrPortLib == NULL)
+      {
       return TR::CPU();
+      }
 
    OMRPORT_ACCESS_FROM_OMRPORT(omrPortLib);
    OMRProcessorDesc processorDescription;
