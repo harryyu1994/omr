@@ -249,7 +249,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
         *
         * TODO: Need to figure out from which mode of Broadwell start supporting TM
         */
-      TR_ASSERT_FATAL(comp->target().cpu.supportsFeature(OMR_PROCESSOR_X86_INTELHASWELL) == _targetProcessorInfo.isIntelHaswell(), "isIntelHaswell() failed\n");
+      TR_ASSERT_FATAL(comp->target().cpu.is(OMR_PROCESSOR_X86_INTELHASWELL) == _targetProcessorInfo.isIntelHaswell(), "isIntelHaswell() failed\n");
       if (!comp->target().cpu.is(OMR_PROCESSOR_X86_INTELHASWELL))
          {
          if (comp->target().is64Bit())
