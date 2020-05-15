@@ -82,11 +82,14 @@ OMR::Z::CPU::detect(OMRPortLibrary * const omrPortLib)
 bool
 OMR::Z::CPU::isAtLeast(OMRProcessorArchitecture p)
    {
+#if defined(TR_HOST_S390) && (defined(J9ZOS390) || defined(LINUX))
    if (TR::Compiler->omrPortLib == NULL)
       return self()->is_at_least_old_api(p);
    self()->is_at_least_test(p);
 
    return _processorDescription.processor >= p;
+#endif
+   return false;
    }
 
 bool
