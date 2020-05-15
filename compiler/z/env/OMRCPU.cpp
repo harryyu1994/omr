@@ -41,21 +41,6 @@ OMR::Z::CPU::detect(OMRPortLibrary * const omrPortLib)
    OMRProcessorDesc processorDescription;
    omrsysinfo_get_processor_description(&processorDescription);
 
-   if (processorDescription.processor >= OMR_PROCESSOR_S390_Z10 && TR::Options::getCmdLineOptions()->getOption(TR_DisableZ10))
-      processorDescription.processor = OMR_PROCESSOR_S390_FIRST;
-   else if (processorDescription.processor >= OMR_PROCESSOR_S390_Z196 && TR::Options::getCmdLineOptions()->getOption(TR_DisableZ196))
-      processorDescription.processor = OMR_PROCESSOR_S390_Z10;
-   else if (processorDescription.processor >= OMR_PROCESSOR_S390_ZEC12 && TR::Options::getCmdLineOptions()->getOption(TR_DisableZEC12))
-      processorDescription.processor = OMR_PROCESSOR_S390_Z196;
-   else if (processorDescription.processor >= OMR_PROCESSOR_S390_Z13 && TR::Options::getCmdLineOptions()->getOption(TR_DisableZ13))
-      processorDescription.processor = OMR_PROCESSOR_S390_ZEC12;
-   else if (processorDescription.processor >= OMR_PROCESSOR_S390_Z14 && TR::Options::getCmdLineOptions()->getOption(TR_DisableZ14))
-      processorDescription.processor = OMR_PROCESSOR_S390_Z13;
-   else if (processorDescription.processor >= OMR_PROCESSOR_S390_Z15 && TR::Options::getCmdLineOptions()->getOption(TR_DisableZ15))
-      processorDescription.processor = OMR_PROCESSOR_S390_Z14;
-   else if (processorDescription.processor >= OMR_PROCESSOR_S390_ZNEXT && TR::Options::getCmdLineOptions()->getOption(TR_DisableZNext))
-      processorDescription.processor = OMR_PROCESSOR_S390_Z15;
-
    if (processorDescription.processor < OMR_PROCESSOR_S390_Z10)
       {
       omrsysinfo_processor_set_feature(&processorDescription, OMR_FEATURE_S390_DFP, FALSE);
