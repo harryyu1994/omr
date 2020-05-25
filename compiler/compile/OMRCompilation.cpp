@@ -292,15 +292,15 @@ OMR::Compilation::Compilation(
    _gpuPtxList(m),
    _gpuKernelLineNumberList(m),
    _gpuPtxCount(0),
-   _target(TR::Compiler->relocatableTarget),
+   // _target(TR::Compiler->relocatableTarget),
    _bitVectorPool(self()),
    _typeLayoutMap((LayoutComparator()), LayoutAllocator(self()->region())),
    _tlsManager(*self())
    {
-   // if (self()->compileRelocatableCode())
-   //    _target = TR::Compiler->relocatableTarget;
-   // else
-   //    _target = TR::Compiler->target;
+   if (self()->compileRelocatableCode())
+      _target = TR::Compiler->target;
+   else
+      _target = TR::Compiler->target;
 
    //Avoid expensive initialization and uneeded option checking if we are doing AOT Loads
    if (_optimizationPlan && _optimizationPlan->getIsAotLoad())
