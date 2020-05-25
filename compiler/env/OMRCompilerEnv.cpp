@@ -158,9 +158,9 @@ OMR::CompilerEnv::initializeRelocatableTargetEnvironment()
    relocatableTarget.setBitness(TR::bits_unknown);
 #endif
 
-   // Initialize the target CPU by querying the host processor
+   // Initialize the reloctable target CPU by querying the host processor
    //
-   relocatableTarget.cpu.initializeByHostQuery();
+   relocatableTarget.cpu = TR::CPU::detect(TR::Compiler->omrPortLib);
 
    // Target major operating system
    //
