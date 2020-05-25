@@ -52,7 +52,7 @@ OMR::CompilerEnv::initialize()
 
    self()->initializeTargetEnvironment();
 
-   self()->initializeRelocatableTargetEnvironment();
+   // self()->initializeRelocatableTargetEnvironment();
 
    om.initialize();
 
