@@ -88,22 +88,13 @@ protected:
    /** 
     * @brief Default constructor that defaults down to OMR minimum supported CPU and features
     */
-   CPU() :
-         _processor(TR_NullProcessor),
-         _endianness(TR::endian_unknown),
-         _majorArch(TR::arch_unknown),
-         _minorArch(TR::m_arch_none)
-      {
-      _processorDescription.processor = OMR_PROCESSOR_UNDEFINED;
-      _processorDescription.physicalProcessor = OMR_PROCESSOR_UNDEFINED;
-      memset(_processorDescription.features, 0, OMRPORT_SYSINFO_FEATURES_SIZE*sizeof(uint32_t));
-      }
+   CPU();
 
    /** 
     * @brief Constructor that initializes the cpu from processor description provided by user
     * @param[in] OMRProcessorDesc : the input processor description
     */
-   CPU(const OMRProcessorDesc& processorDescription) : _processorDescription(processorDescription) {}
+   CPU(const OMRProcessorDesc& processorDescription);
 
 public:
 
@@ -115,10 +106,6 @@ public:
     * @return TR::CPU
     */
    static TR::CPU detect(OMRPortLibrary * const omrPortLib);
-
-   // Initialize CPU info by querying the host processor at compile-time
-   //
-   void initializeByHostQuery();
 
    TR_Processor setProcessor(TR_Processor p) { return(_processor = p); }
 
