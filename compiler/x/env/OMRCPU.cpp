@@ -165,12 +165,6 @@ OMR::X86::CPU::getSupportsHardwareSQRT()
    }
 
 bool
-OMR::X86::CPU::testOSForSSESupport()
-   {
-   return false;
-   }
-
-bool
 OMR::X86::CPU::supportsTransactionalMemoryInstructions()
    {
    flags32_t processorFeatureFlags8(self()->getX86ProcessorFeatureFlags8());
@@ -242,6 +236,7 @@ OMR::X86::CPU::prefersMultiByteNOP()
    {
    if (TR::Compiler->omrPortLib == NULL)
       return TR::CodeGenerator::getX86ProcessorInfo().prefersMultiByteNOP();
+   TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().prefersMultiByteNOP() == (self()->isGenuineIntel() && !self()->is(OMR_PROCESSOR_X86_INTELPENTIUM)), "prefersMultiByteNOP");
 
    return self()->isGenuineIntel() && !self()->is(OMR_PROCESSOR_X86_INTELPENTIUM);
    }
@@ -261,7 +256,7 @@ OMR::X86::CPU::is(OMRProcessorArchitecture p)
    {
    if (TR::Compiler->omrPortLib == NULL)
       return self()->is_old_api(p);
-   self()->is_test(p);
+   TR_ASSERT_FATAL(self()->is_test(p), "old api and new api did not match, processor %d", p);
 
    return _processorDescription.processor == p;
    }
@@ -271,70 +266,54 @@ OMR::X86::CPU::supportsFeature(uint32_t feature)
    {
    if (TR::Compiler->omrPortLib == NULL)
       return self()->supports_feature_old_api(feature);
-   self()->supports_feature_test(feature);
+   TR_ASSERT_FATAL(self()->supports_feature_test(feature), "old api and new api did not match, feature %d", feature);
 
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
    return TRUE == omrsysinfo_processor_has_feature(&_processorDescription, feature);
    }
 
-void
+bool
 OMR::X86::CPU::is_test(OMRProcessorArchitecture p)
    {
    switch(p)
       {
       case OMR_PROCESSOR_X86_INTELWESTMERE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelWestmere() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELWESTMERE");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelWestmere() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELNEHALEM:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelNehalem() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELNEHALEM");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelNehalem() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELPENTIUM:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelPentium() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELPENTIUM");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelPentium() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELP6:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelP6() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELP6");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelP6() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELPENTIUM4:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelPentium4() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELPENTIUM4");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelPentium4() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELCORE2:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelCore2() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELCORE2");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelCore2() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELTULSA:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelTulsa() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELTULSA");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelTulsa() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELSANDYBRIDGE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelSandyBridge() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELSANDYBRIDGE");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelSandyBridge() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELIVYBRIDGE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelIvyBridge() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELIVYBRIDGE");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelIvyBridge() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELHASWELL:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelHaswell() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELHASWELL");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelHaswell() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELBROADWELL:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelBroadwell() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELBROADWELL");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelBroadwell() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_INTELSKYLAKE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isIntelSkylake() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_INTELSKYLAKE");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isIntelSkylake() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_AMDATHLONDURON:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isAMDAthlonDuron() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_AMDATHLONDURON");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isAMDAthlonDuron() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_AMDOPTERON:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isAMDOpteron() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_AMDOPTERON");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isAMDOpteron() == (_processorDescription.processor == p);
       case OMR_PROCESSOR_X86_AMDFAMILY15H:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().isAMD15h() == (_processorDescription.processor == p), "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().isAMD15h() == (_processorDescription.processor == p);
       default:
-         TR_ASSERT_FATAL(false, "Unknown processor");
-         break;
+         return false;
       }
-   return;
+   return false;
    }
 
-void
+bool
 OMR::X86::CPU::supports_feature_test(uint32_t feature)
    {
    OMRPORT_ACCESS_FROM_OMRPORT(TR::Compiler->omrPortLib);
@@ -343,126 +322,87 @@ OMR::X86::CPU::supports_feature_test(uint32_t feature)
    switch(feature)
       {
       case OMR_FEATURE_X86_OSXSAVE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().enabledXSAVE() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().enabledXSAVE() == ans;
       case OMR_FEATURE_X86_FPU:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasBuiltInFPU() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasBuiltInFPU() == ans;
       case OMR_FEATURE_X86_VME:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsVirtualModeExtension() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsVirtualModeExtension() == ans;
       case OMR_FEATURE_X86_DE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsDebuggingExtension() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsDebuggingExtension() == ans;
       case OMR_FEATURE_X86_PSE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsPageSizeExtension() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsPageSizeExtension() == ans;
       case OMR_FEATURE_X86_TSC:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsRDTSCInstruction() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsRDTSCInstruction() == ans;
       case OMR_FEATURE_X86_MSR:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasModelSpecificRegisters() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasModelSpecificRegisters() == ans;
       case OMR_FEATURE_X86_PAE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsPhysicalAddressExtension() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsPhysicalAddressExtension() == ans;
       case OMR_FEATURE_X86_MCE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsMachineCheckException() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsMachineCheckException() == ans;
       case OMR_FEATURE_X86_CX8:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsCMPXCHG8BInstruction() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsCMPXCHG8BInstruction() == ans;
       case OMR_FEATURE_X86_CMPXCHG16B:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsCMPXCHG16BInstruction() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsCMPXCHG16BInstruction() == ans;
       case OMR_FEATURE_X86_APIC:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasAPICHardware() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasAPICHardware() == ans;
       case OMR_FEATURE_X86_MTRR:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasMemoryTypeRangeRegisters() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasMemoryTypeRangeRegisters() == ans;
       case OMR_FEATURE_X86_PGE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsPageGlobalFlag() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsPageGlobalFlag() == ans;
       case OMR_FEATURE_X86_MCA:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasMachineCheckArchitecture() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasMachineCheckArchitecture() == ans;
       case OMR_FEATURE_X86_CMOV:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsCMOVInstructions() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsCMOVInstructions() == ans;
       case OMR_FEATURE_X86_PAT:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasPageAttributeTable() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasPageAttributeTable() == ans;
       case OMR_FEATURE_X86_PSE_36:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().has36BitPageSizeExtension() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().has36BitPageSizeExtension() == ans;
       case OMR_FEATURE_X86_PSN:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasProcessorSerialNumber() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasProcessorSerialNumber() == ans;
       case OMR_FEATURE_X86_CLFSH:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsCLFLUSHInstruction() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsCLFLUSHInstruction() == ans;
       case OMR_FEATURE_X86_DS:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsDebugTraceStore() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsDebugTraceStore() == ans;
       case OMR_FEATURE_X86_ACPI:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasACPIRegisters() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasACPIRegisters() == ans;
       case OMR_FEATURE_X86_MMX:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsMMXInstructions() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsMMXInstructions() == ans;
       case OMR_FEATURE_X86_FXSR:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsFastFPSavesRestores() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsFastFPSavesRestores() == ans;
       case OMR_FEATURE_X86_SSE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSSE() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE() == ans;
       case OMR_FEATURE_X86_SSE2:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSSE2() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE2() == ans;
       case OMR_FEATURE_X86_SSE3:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSSE3() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE3() == ans;
       case OMR_FEATURE_X86_SSSE3:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSSSE3() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSSSE3() == ans;
       case OMR_FEATURE_X86_SSE4_1:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSSE4_1() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE4_1() == ans;
       case OMR_FEATURE_X86_SSE4_2:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSSE4_2() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSSE4_2() == ans;
       case OMR_FEATURE_X86_PCLMULQDQ:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsCLMUL() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsCLMUL() == ans;
       case OMR_FEATURE_X86_AESNI:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsAESNI() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsAESNI() == ans;
       case OMR_FEATURE_X86_POPCNT:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsPOPCNT() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsPOPCNT() == ans;
       case OMR_FEATURE_X86_SS:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsSelfSnoop() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsSelfSnoop() == ans;
       case OMR_FEATURE_X86_RTM:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsTM() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsTM() == ans;
       case OMR_FEATURE_X86_HTT:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsHyperThreading() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsHyperThreading() == ans;
       case OMR_FEATURE_X86_HLE:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().supportsHLE() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().supportsHLE() == ans;
       case OMR_FEATURE_X86_TM:
-         TR_ASSERT_FATAL(TR::CodeGenerator::getX86ProcessorInfo().hasThermalMonitor() == ans, "OMR_PROCESSOR_X86_AMDFAMILY15H");
-         break;
+         return TR::CodeGenerator::getX86ProcessorInfo().hasThermalMonitor() == ans;
       case OMR_FEATURE_X86_AVX:
-         break;
+         return true;
       default:
-         TR_ASSERT_FATAL(false, "Unknown feature");
-         break;
+         return false;
       }
-   return;
+   return false;
    }
 
 bool
@@ -517,7 +457,7 @@ OMR::X86::CPU::is_old_api(OMRProcessorArchitecture p)
          ans = TR::CodeGenerator::getX86ProcessorInfo().isAMD15h();
          break;
       default:
-         TR_ASSERT_FATAL(false, "Unknown processor");
+         TR_ASSERT_FATAL(false, "Unknown processor %d", p);
          break;
       }
    return ans;
@@ -644,9 +584,8 @@ OMR::X86::CPU::supports_feature_old_api(uint32_t feature)
          supported = TR::CodeGenerator::getX86ProcessorInfo().hasThermalMonitor();
          break;
       default:
-         TR_ASSERT_FATAL(false, "Unknown feature");
+         TR_ASSERT_FATAL(false, "Unknown feature %d", feature);
          break;
       }
    return supported;
    }
-

@@ -112,12 +112,6 @@ public:
    // Processor identity and generation comparisons
    //
    TR_Processor id() { return _processor; }
-   bool is(TR_Processor p) { return _processor == p; }
-   bool isNot(TR_Processor p) { return _processor != p; }
-   bool isAtLeast(TR_Processor p) { return _processor >= p; }
-   bool isLaterThan(TR_Processor p) { return _processor > p; }
-   bool isEarlierThan(TR_Processor p) { return _processor < p; }
-   bool isAtMost(TR_Processor p) { return _processor <= p; }
 
    bool getSupportsHardwareSQRT() { return false; }
    bool getSupportsHardwareRound() { return false; }
@@ -163,14 +157,14 @@ public:
     * @param[in] p : the input processor type
     * @return true when current processor is equal or newer than the input processor type
     */
-   bool isAtLeast(OMRProcessorArchitecture p) { return _processorDescription.processor >= p; }
+   bool isAtLeast(OMRProcessorArchitecture p) const { return _processorDescription.processor >= p; }
 
    /** 
     * @brief Determines whether current processor is equal or older than the input processor type
     * @param[in] p : the input processor type
     * @return true when current processor is equal or newer than the input processor type
     */
-   bool isAtMost(OMRProcessorArchitecture p) { return _processorDescription.processor <= p; }
+   bool isAtMost(OMRProcessorArchitecture p) const { return _processorDescription.processor <= p; }
 
    /** 
     * @brief Retrieves current processor's processor description
