@@ -235,8 +235,7 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
 #if defined(TR_TARGET_X86) && !defined(J9HAMMER)
    TR_ASSERT_FATAL(comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) == _targetProcessorInfo.supportsSSE2(), "supportsSSE2() failed\n");
    
-   // if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) && comp->target().cpu.testOSForSSESupport())
-   if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2))
+   if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) && comp->target().cpu.testOSForSSESupport())
       supportsSSE2 = true;
 #endif // defined(TR_TARGET_X86) && !defined(J9HAMMER)
 
@@ -295,8 +294,8 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    // 64-bit platforms unconditionally support prefetching.
    //
    TR_ASSERT_FATAL(comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) == _targetProcessorInfo.supportsSSE(), "supportsSSE() failed\n");
-   if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE))
-   // if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) && comp->target().cpu.testOSForSSESupport())
+   // if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE))
+   if (comp->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) && comp->target().cpu.testOSForSSESupport())
 #endif // defined(TR_TARGET_X86) && !defined(J9HAMMER)
       {
       self()->setTargetSupportsSoftwarePrefetches();

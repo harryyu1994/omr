@@ -164,6 +164,12 @@ OMR::X86::CPU::getSupportsHardwareSQRT()
    return true;
    }
 
+bool  
+OMR::X86::CPU::testOSForSSESupport()   
+   {  
+   return false;  
+   }
+
 bool
 OMR::X86::CPU::supportsTransactionalMemoryInstructions()
    {

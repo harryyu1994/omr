@@ -99,6 +99,7 @@ public:
    bool supportsSFence();
    bool prefersMultiByteNOP();
    bool supportsAVX();
+   bool testOSForSSESupport();
 
    // Will be removed once we no longer need the old processor detection apis
    bool is(OMRProcessorArchitecture p);
