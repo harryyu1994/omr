@@ -262,6 +262,16 @@ static intptr_t omrsysinfo_get_s390_description(struct OMRPortLibrary *portLibra
 static intptr_t omrsysinfo_get_riscv_description(struct OMRPortLibrary *portLibrary, OMRProcessorDesc *desc);
 #endif
 
+#if defined(J9ARM)
+static intptr_t omrsysinfo_get_arm_description(struct OMRPortLibrary *portLibrary, OMRProcessorDesc *desc);
+static OMRProcessorArchitecture omrsysinfo_get_linux_arm_description_helper();
+#endif
+
+#if defined(J9AARCH64)
+static intptr_t omrsysinfo_get_aarch64_description(struct OMRPortLibrary *portLibrary, OMRProcessorDesc *desc);
+#endif
+
+
 static const char getgroupsErrorMsgPrefix[] = "getgroups : ";
 
 typedef struct EnvListItem {
@@ -629,6 +639,10 @@ omrsysinfo_get_processor_description(struct OMRPortLibrary *portLibrary, OMRProc
 		rc = omrsysinfo_get_s390_description(portLibrary, desc);
 #elif defined(RISCV)
 		rc = omrsysinfo_get_riscv_description(portLibrary, desc);
+#elif defined(J9ARM)
+		rc = omrsysinfo_get_arm_description(portLibrary, desc);
+#elif defined(J9AARCH64)
+		rc = omrsysinfo_get_aarch64_description(portLibrary, desc);
 #endif
 	}
 
@@ -1453,6 +1467,85 @@ omrsysinfo_get_riscv_description(struct OMRPortLibrary *portLibrary, OMRProcesso
 	return 0;
 }
 #endif /* defined(RISCV) */
+
+#if defined(J9ARM)
+static intptr_t
+omrsysinfo_get_arm_description(struct OMRPortLibrary *portLibrary, OMRProcessorDesc *desc)
+{
+#if defined(LINUX)
+	desc->processor = omrsysinfo_get_linux_arm_description_helper();
+#else
+	desc->processor = OMR_PROCESSOR_ARM_UNKNOWN;
+#endif
+	desc->physicalProcessor = desc->processor;
+	return 0;
+}
+
+static OMRProcessorArchitecture
+omrsysinfo_get_linux_arm_description_helper()
+{
+	OMRProcessorArchitecture rc = OMR_PROCESSOR_ARM_UNKNOWN;
+	FILE * fp;
+	char buffer[120];
+	char *line_p;
+	char *cpu_name = NULL;
+	char *position_l, *position_r;
+	size_t n = 120;
+
+	fp = fopen("/proc/cpuinfo", "r");
+	if (fp == NULL)
+		return rc;
+
+	line_p = buffer;
+	while (0 == feof(fp)) {
+		fgets(line_p, n, fp);
+		// note the capital P, this isn't searching for the processor: line, it's
+		// searching for part of the model name value
+		position_l = strstr(line_p, "Processor");
+		// found the model name line, position_l is to the right of the target data
+		if (position_l) {
+			position_l = strchr(line_p, ':');
+			if (NULL == position_l) return rc;
+			position_l++;
+			while (' ' == *(position_l)) position_l++;
+
+			position_r = strchr(line_p, '\n');
+			if (NULL == position_r) return rc;
+
+			while (' ' == *(position_r-1)) position_r--;
+
+			if (position_l >= position_r) return rc;
+
+			/* localize the cpu name */
+			cpu_name = position_l;
+			*position_r = '\000';
+			break;
+		}
+	}
+
+	if (NULL == cpu_name) return rc;
+
+	fclose(fp);
+
+	if (strstr(cpu_name, "ARMv7"))
+		rc = OMR_PROCESSOR_ARM_V7;
+	else if (strstr(cpu_name, "ARMv6"))
+		rc = OMR_PROCESSOR_ARM_V6;
+
+	return rc;
+}
+#endif /* defined(J9ARM) */
+
+#if defined(J9AARCH64)
+static intptr_t
+omrsysinfo_get_aarch64_description(struct OMRPortLibrary *portLibrary, OMRProcessorDesc *desc)
+{
+	// ToDo: Add code for detecting processor type (OpenJ9 Issue #6637)
+	desc->processor = OMR_PROCESSOR_ARM64_UNKNOWN;
+	desc->physicalProcessor = desc->processor;
+	return 0;
+}
+#endif /* defined(J9AARCH64) */
 
 intptr_t
 omrsysinfo_get_env(struct OMRPortLibrary *portLibrary, const char *envVar, char *infoString, uintptr_t bufSize)
