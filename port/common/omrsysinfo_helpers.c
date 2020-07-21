@@ -228,6 +228,19 @@ omrsysinfo_get_x86_processor_feature_name(uint32_t feature)
 {
 	if (feature < 0 || feature >= sizeof(OMR_FEATURE_X86_NAME)/sizeof(const char *))
 		return "null";
+
+	static int count = 0;
+	if (count == 0)
+	{
+		int i = 0;
+		for (i = 0; i < sizeof(OMR_FEATURE_X86_NAME)/sizeof(const char *); i++)
+		{
+			printf(" %d  %d ", OMR_FEATURE_X86_NAME[i], i);
+		}
+		printf("\n");
+		count += 1;
+	}
+
 	return OMR_FEATURE_X86_NAME[feature];
 }
 
