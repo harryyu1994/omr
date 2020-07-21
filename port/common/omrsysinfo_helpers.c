@@ -235,7 +235,7 @@ omrsysinfo_get_x86_processor_feature_name(uint32_t feature)
 		int i = 0;
 		for (i = 0; i < sizeof(OMR_FEATURE_X86_NAME)/sizeof(const char *); i++)
 		{
-			printf(" %d  %d ", OMR_FEATURE_X86_NAME[i], i);
+			printf(" %s  %d ", OMR_FEATURE_X86_NAME[i], i);
 		}
 		printf("\n");
 		count += 1;
