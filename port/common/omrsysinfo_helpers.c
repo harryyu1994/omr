@@ -126,7 +126,7 @@ const char* const OMR_FEATURE_X86_NAME[] = {
 	"null",             /* 0 * 32 + 30 */
 	"pbe",              /* 0 * 32 + 31 */
 	"sse3",             /* 1 * 32 + 0 */
-	"pclmulqdq"         /* 1 * 32 + 1 */
+	"pclmulqdq",        /* 1 * 32 + 1 */
 	"dtes64",           /* 1 * 32 + 2 */
 	"monitor",          /* 1 * 32 + 3 */
 	"ds_cpl",           /* 1 * 32 + 4 */
