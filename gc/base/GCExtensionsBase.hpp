@@ -689,6 +689,7 @@ public:
 	bool shouldAllowShiftingCompression; /**< temporary option to enable compressed reference scaling by shifting pointers */
 	bool shouldForceSpecifiedShiftingCompression; /**< temporary option to enable forcedShiftingCompressionAmount */
 	uintptr_t forcedShiftingCompressionAmount; /**< temporary option to force compressed reference scaling to use this as the shifted value (typically 0-3 in current usage) */
+	bool shouldForceToLowMemoryHeapCeilingShiftIfPossible;
 #endif /* defined (OMR_GC_COMPRESSED_POINTERS) */
 
 	uintptr_t preferredHeapBase; /**< the preferred heap base for heap allocated using virtual memory */

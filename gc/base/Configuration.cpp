@@ -305,7 +305,13 @@ MM_Configuration::initializeRunTimeObjectAlignmentAndCRShift(MM_EnvironmentBase*
 		}
 #endif /* defined(S390) */
 
+		// we are going to introduce a new extensions->forceshiftvalueduetoportablescc
+		// if shift > 4, we won't do it
+		// else we make it to 3
+		if ((canChangeShift) && extensions->shouldForceToLowMemoryHeapCeilingShiftIfPossible && shift < DEFAULT_LOW_MEMORY_HEAP_CEILING_SHIFT)
+			shift = DEFAULT_LOW_MEMORY_HEAP_CEILING_SHIFT;
 		omrVM->_compressedPointersShift = shift;
+		printf ("OMRVM->CRSHIFT has been set to %lu\n", shift);
 	}
 
 #endif /* defined(OMR_GC_COMPRESSED_POINTERS) */
