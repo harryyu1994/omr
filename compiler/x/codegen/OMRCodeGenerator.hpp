@@ -39,6 +39,7 @@ namespace OMR { typedef OMR::X86::CodeGenerator CodeGeneratorConnector; }
 #include "codegen/ScratchRegisterManager.hpp"
 #include "compile/Compilation.hpp"
 #include "env/jittypes.h"
+#include "env/CPU.hpp"
 #include "il/AutomaticSymbol.hpp"
 #include "il/LabelSymbol.hpp"
 #include "il/ResolvedMethodSymbol.hpp"
@@ -221,9 +222,9 @@ private:
 
    uint32_t _processorDescription;
 
-   friend class OMR::X86::CodeGenerator;
+   friend class OMR::X86::CPU;
 
-   void initialize(TR::CodeGenerator *cg);
+   void initialize();
 
    /**
     * @brief testFlag Ensures that the feature being tested for exists in the mask

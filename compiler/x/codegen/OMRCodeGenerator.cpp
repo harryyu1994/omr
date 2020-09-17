@@ -109,20 +109,20 @@ namespace TR { class RegisterDependencyConditions; }
 
 TR_X86ProcessorInfo OMR::X86::CodeGenerator::_targetProcessorInfo;
 
-void TR_X86ProcessorInfo::initialize(TR::CodeGenerator *cg)
+void TR_X86ProcessorInfo::initialize()
    {
    if (_featureFlags.testAny(TR_X86ProcessorInfoInitialized))
       return;
    // For now, we only convert the feature bits into a flags32_t, for easier querying.
    // To retrieve other information, the VM functions can be called directly.
    //
-   _featureFlags.set(cg->comp()->target().cpu.getX86ProcessorFeatureFlags());
-   _featureFlags2.set(cg->comp()->target().cpu.getX86ProcessorFeatureFlags2());
-   _featureFlags8.set(cg->comp()->target().cpu.getX86ProcessorFeatureFlags8());
+   _featureFlags.set(TR::Compiler->target.cpu.getX86ProcessorFeatureFlags());
+   _featureFlags2.set(TR::Compiler->target.cpu.getX86ProcessorFeatureFlags2());
+   _featureFlags8.set(TR::Compiler->target.cpu.getX86ProcessorFeatureFlags8());
 
    // Determine the processor vendor.
    //
-   const char *vendor = cg->comp()->target().cpu.getX86ProcessorVendorId();
+   const char *vendor = TR::Compiler->target.cpu.getX86ProcessorVendorId();
    if (!strncmp(vendor, "GenuineIntel", 12))
       _vendorFlags.set(TR_GenuineIntel);
    else if (!strncmp(vendor, "AuthenticAMD", 12))
@@ -139,7 +139,7 @@ void TR_X86ProcessorInfo::initialize(TR::CodeGenerator *cg)
 
    // set up the processor family and cache description
 
-   uint32_t _processorSignature = cg->comp()->target().cpu.getX86ProcessorSignature();
+   uint32_t _processorSignature = TR::Compiler->target.cpu.getX86ProcessorSignature();
 
    if (isGenuineIntel())
       {
@@ -208,7 +208,6 @@ OMR::X86::CodeGenerator::initialize(TR::Compilation *comp)
    {
 
    bool supportsSSE2 = false;
-   _targetProcessorInfo.initialize(self());
 
    TR_ASSERT_FATAL(comp->compileRelocatableCode() || comp->isOutOfProcessCompilation() || comp->target().cpu.isGenuineIntel() == _targetProcessorInfo.isGenuineIntel(), "isGenuineIntel() failed\n");
    TR_ASSERT_FATAL(comp->compileRelocatableCode() || comp->isOutOfProcessCompilation() || comp->target().cpu.isAuthenticAMD() == _targetProcessorInfo.isAuthenticAMD(), "isAuthenticAMD() failed\n");
