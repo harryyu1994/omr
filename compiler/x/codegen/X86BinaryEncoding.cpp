@@ -103,8 +103,6 @@ int32_t memoryBarrierRequired(
 
    static char *mbou = feGetEnv("TR_MemoryBarriersOnUnresolved");
 
-   TR_ASSERT_FATAL(cg->comp()->compileRelocatableCode() || cg->comp()->isOutOfProcessCompilation() || cg->comp()->target().cpu.requiresLFence() == cg->getX86ProcessorInfo().requiresLFENCE(), "requiresLFence() failed\n");
-
    // Unresolved references are assumed to be volatile until they can be proven otherwise.
    // The memory barrier will be removed by PicBuilder when the reference is resolved and
    // proven to be non-volatile.
@@ -143,8 +141,6 @@ int32_t memoryBarrierRequired(
    static char *disableExplicitFences = feGetEnv("TR_DisableExplicitFences");
    if (barrier)
       {
-      TR_ASSERT_FATAL(cg->comp()->compileRelocatableCode() || cg->comp()->isOutOfProcessCompilation() || cg->comp()->target().cpu.supportsLFence() == cg->getX86ProcessorInfo().supportsLFence(), "supportsLFence() failed\n");
-      TR_ASSERT_FATAL(cg->comp()->compileRelocatableCode() || cg->comp()->isOutOfProcessCompilation() || cg->comp()->target().cpu.supportsMFence() == cg->getX86ProcessorInfo().supportsMFence(), "supportsMFence() failed\n");
       if ((!cg->comp()->target().cpu.supportsLFence() ||
            !cg->comp()->target().cpu.supportsMFence()) || disableExplicitFences)
          {

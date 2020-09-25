@@ -1040,9 +1040,6 @@ TR::Register *OMR::X86::TreeEvaluator::fpConvertToInt(TR::Node *node, TR::Symbol
    startLabel->setStartInternalControlFlow();
    reStartLabel->setEndInternalControlFlow();
 
-   TR_ASSERT_FATAL(cg->comp()->compileRelocatableCode() || cg->comp()->isOutOfProcessCompilation() || cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) == cg->getX86ProcessorInfo().supportsSSE(), "supportsSSE() failed\n");
-   TR_ASSERT_FATAL(cg->comp()->compileRelocatableCode() || cg->comp()->isOutOfProcessCompilation() || cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE2) == cg->getX86ProcessorInfo().supportsSSE2(), "supportsSSE2() failed\n");
-
    bool optimizeF2IWithSSE = ( node->getOpCodeValue() == TR::f2i &&
                                cg->comp()->target().cpu.supportsFeature(OMR_FEATURE_X86_SSE) );
 
@@ -2207,8 +2204,6 @@ TR::Register *OMR::X86::TreeEvaluator::generateFPCompareResult(TR::Node *node, T
 bool OMR::X86::TreeEvaluator::canUseFCOMIInstructions(TR::Node *node, TR::CodeGenerator *cg)
    {
    TR::ILOpCodes cmpOp = node->getOpCodeValue();
-
-   TR_ASSERT_FATAL(cg->comp()->compileRelocatableCode() || cg->comp()->isOutOfProcessCompilation() || cg->comp()->target().cpu.supportsFCOMIInstructions() == cg->getX86ProcessorInfo().supportsFCOMIInstructions(), "supportsFCOMIInstuctions() failed\n");
 
    return (!cg->comp()->target().cpu.supportsFCOMIInstructions() ||
            cmpOp == TR::iffcmpneu ||

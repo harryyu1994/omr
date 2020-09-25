@@ -38,8 +38,6 @@ template <typename TBuffer> inline typename TBuffer::cursor_t TR_X86OpCode::OpCo
    rex.W = rex_w;
    // Use AVX if possible
 
-   TR_ASSERT_FATAL(TR::comp()->compileRelocatableCode() || TR::comp()->isOutOfProcessCompilation() || TR::comp()->target().cpu.supportsAVX() == TR::CodeGenerator::getX86ProcessorInfo().supportsAVX(), "supportsAVX() failed\n");
-
    if (supportsAVX() && TR::comp()->target().cpu.supportsAVX())
       {
       TR::Instruction::VEX<3> vex(rex, modrm_opcode);

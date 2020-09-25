@@ -117,7 +117,7 @@ struct TR_BetterSpillPlacement
 
 struct TR_X86ProcessorInfo
    {
-   public:
+public:
 
    TR_ALLOC(TR_Memory::IA32ProcessorInfo)
 
@@ -127,6 +127,8 @@ struct TR_X86ProcessorInfo
       TR_GenuineIntel                  = 0x02,
       TR_UnknownVendor                 = 0x04
       };
+
+private:
 
    bool enabledXSAVE()                     {return testFeatureFlags2(TR_OSXSAVE);}
    bool hasBuiltInFPU()                    {return testFeatureFlags(TR_BuiltInFPU);}
@@ -212,8 +214,6 @@ struct TR_X86ProcessorInfo
 
    int32_t getX86Architecture() { return (_processorDescription & 0x000000ff);}
 
-private:
-
    flags8_t   _vendorFlags;
    flags32_t  _featureFlags;   // cache feature flags for re-use
    flags32_t  _featureFlags2;  // cache feature flags 2 for re-use
@@ -222,6 +222,7 @@ private:
    uint32_t _processorDescription;
 
    friend class OMR::X86::CodeGenerator;
+   friend class OMR::X86::CPU;
 
    void initialize(TR::CodeGenerator *cg);
 
