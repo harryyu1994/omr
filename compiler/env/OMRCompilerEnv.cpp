@@ -48,6 +48,8 @@ TR::CompilerEnv *OMR::CompilerEnv::self()
 void
 OMR::CompilerEnv::initialize()
    {
+   TR::CPU::enableFeatureMasks();
+
    self()->initializeHostEnvironment();
 
    self()->initializeTargetEnvironment();

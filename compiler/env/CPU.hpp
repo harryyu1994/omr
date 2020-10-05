@@ -28,7 +28,7 @@ namespace TR
 {
 class OMR_EXTENSIBLE CPU : public OMR::CPUConnector
    {
-   public:
+protected:
 
    CPU() : OMR::CPUConnector() {}
    CPU(const OMRProcessorDesc& processorDescription) : OMR::CPUConnector(processorDescription) {}

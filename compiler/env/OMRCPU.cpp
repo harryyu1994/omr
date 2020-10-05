@@ -147,6 +147,14 @@ OMR::CPU::self()
    return static_cast<TR::CPU*>(this);
    }
 
+void
+OMR::CPU::enableFeatureMasks()
+   {
+   // Assume all features will be utilized by default
+   memset(_supportedFeatureMasks.features, ~0, OMRPORT_SYSINFO_FEATURES_SIZE*sizeof(uint32_t));
+   _isSupportedFeatureMasksEnabled = true;
+   }
+
 TR::CPU
 OMR::CPU::detect(OMRPortLibrary * const omrPortLib)
    {
