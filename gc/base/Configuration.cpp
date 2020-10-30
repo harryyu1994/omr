@@ -267,6 +267,7 @@ MM_Configuration::createHeap(MM_EnvironmentBase* env, uintptr_t heapBytesRequest
 bool
 MM_Configuration::initializeRunTimeObjectAlignmentAndCRShift(MM_EnvironmentBase* env, MM_Heap* heap)
 {
+	printf("in MM_Configuration::initializeRunTimeObjectAlignmentAndCRShift\n");
 	MM_GCExtensionsBase* extensions = env->getExtensions();
 	OMR_VM *omrVM = env->getOmrVM();
 
