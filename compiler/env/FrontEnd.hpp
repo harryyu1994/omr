@@ -193,6 +193,7 @@ public:
    virtual TR_OpaqueClassBlock * getClassFromNewArrayType(int32_t arrayType);
    virtual TR_OpaqueClassBlock * getClassFromSignature(const char * sig, int32_t length, TR_ResolvedMethod *method, bool callSiteVettedForAOT=false);
    virtual TR_OpaqueClassBlock * getClassFromSignature(const char * sig, int32_t length, TR_OpaqueMethodBlock *method, bool callSiteVettedForAOT=false);
+
    virtual TR_OpaqueClassBlock * getClassOfMethod(TR_OpaqueMethodBlock *method);
    virtual TR_OpaqueClassBlock * getComponentClassFromArrayClass(TR_OpaqueClassBlock *arrayClass);
    virtual TR_OpaqueClassBlock * getLeafComponentClassFromArrayClass(TR_OpaqueClassBlock *arrayClass);

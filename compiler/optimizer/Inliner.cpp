@@ -3929,6 +3929,11 @@ void OMR_InlinerUtil::collectCalleeMethodClassInfo(TR_ResolvedMethod *calleeMeth
    return;
    }
 
+
+// analyzeCallSite passes a freshly minted TR_CallSite to getSymbolAndFindInlineTargets
+// calls callsite->findCallSiteTarget(callStack, this)
+// to let the logic specific to the type of this particular TR_CallSite to build a list of possible TR_CallTargets
+
 void TR_InlinerBase::getSymbolAndFindInlineTargets(TR_CallStack *callStack, TR_CallSite *callsite, bool findNewTargets)
    {
    TR_InlinerDelimiter delimiter(tracer(),"getSymbolAndFindInlineTargets");

@@ -361,7 +361,7 @@ uint32_t     TR_ResolvedMethod::intConstant(int32_t)                       { TR_
 uint64_t     TR_ResolvedMethod::longConstant(int32_t)                      { TR_UNIMPLEMENTED(); return 0; }
 float *      TR_ResolvedMethod::floatConstant(int32_t)                     { TR_UNIMPLEMENTED(); return 0; }
 double *     TR_ResolvedMethod::doubleConstant(int32_t, TR_Memory *)       { TR_UNIMPLEMENTED(); return 0; }
-void *       TR_ResolvedMethod::stringConstant(int32_t)                    { TR_UNIMPLEMENTED(); return 0; }
+void *       TR_ResolvedMethod::stringConstant(TR::Compilation *comp, int32_t)                    { TR_UNIMPLEMENTED(); return 0; }
 bool         TR_ResolvedMethod::isUnresolvedString(int32_t, bool optimizeForAOT)                { TR_UNIMPLEMENTED(); return false; }
 void *       TR_ResolvedMethod::getConstantDynamicTypeFromCP(int32_t cpIndex)   { TR_UNIMPLEMENTED(); return 0; }
 bool         TR_ResolvedMethod::isConstantDynamic(int32_t cpIndex)            { TR_UNIMPLEMENTED(); return false; }

@@ -226,7 +226,6 @@ TR_FrontEnd::getClassFromSignature(const char * sig, int32_t length, TR_OpaqueMe
    return 0;
    }
 
-
 TR_YesNoMaybe
 TR_FrontEnd::isInstanceOf(TR_OpaqueClassBlock *instanceClass, TR_OpaqueClassBlock * castClass, bool instanceIsFixed, bool castIsFixed, bool optimizeForAOT)
    {

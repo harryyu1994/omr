@@ -132,7 +132,7 @@ public:
    virtual uint64_t longConstant(int32_t cpIndex);
    virtual float *floatConstant(int32_t cpIndex);
    virtual double *doubleConstant(int32_t cpIndex, TR_Memory *);
-   virtual void *stringConstant(int32_t cpIndex);
+   virtual void *stringConstant(TR::Compilation * comp, int32_t cpIndex);
    virtual void *getConstantDynamicTypeFromCP(int32_t cpIndex);
    virtual bool isUnresolvedString(int32_t cpIndex, bool optimizeForAOT = false);
    virtual bool isConstantDynamic(int32_t cpIndex);
